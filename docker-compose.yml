@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  abt_ai_image_desc:
+    build: .
+    container_name: abt_ai_image_desc
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./.env:/app/.env:ro
+      - ./images:/app/images
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped 

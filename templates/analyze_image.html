@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Phân tích batch ảnh AI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .dashboard { background: #fff; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); padding: 18px 18px 8px 18px; margin-bottom: 24px; max-width: 900px; margin-left:auto; margin-right:auto; }
+        .dashboard-title { font-size: 20px; font-weight: 600; color: #007bff; margin-bottom: 10px; }
+        .progress-bar { height: 18px; background: #e9ecef; border-radius: 8px; margin: 12px 0; width: 100%; }
+        .progress-bar-inner { height: 100%; background: #007bff; border-radius: 8px; transition: width 0.2s; }
+        .dashboard-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 15px; }
+        .dashboard-table th, .dashboard-table td { padding: 6px 10px; border-bottom: 1px solid #eee; text-align: center; }
+        .dashboard-table th { background: #f5f5f5; color: #007bff; font-weight: 600; }
+        .dashboard-table tr:last-child td { border-bottom: none; }
+        .chart-block { margin: 18px 0; }
+        .result-box { background: #f5f5f5; padding: 16px; border-radius: 8px; margin-top: 24px; }
+        .log-list { font-family: monospace; font-size: 15px; background: #fff; border-radius: 8px; padding: 12px; margin-top: 12px; max-height: 350px; overflow-y: auto; }
+        .log-ok { color: #28a745; }
+        .log-err { color: #d9534f; }
+        .batch-form { margin-bottom: 18px; }
+        .batch-form input[type=number] { padding: 8px 12px; font-size: 16px; border-radius: 6px; border: 1px solid #ccc; width: 80px; }
+        .batch-form button { padding: 8px 24px; font-size: 16px; border-radius: 6px; border: none; background: #007bff; color: #fff; cursor: pointer; margin-left: 8px; }
+        .batch-form button:disabled { background: #b0c4de; cursor: not-allowed; }
+        .batch-form button.stop-btn { background: #d9534f; margin-left: 16px; }
+        .batch-form button.stop-btn:disabled { background: #f5b7b1; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="dashboard-title">Dashboard thống kê phân tích AI</div>
+        <div id="dashboard-progress"></div>
+        <div class="chart-block">
+            <canvas id="chart-count" height="120"></canvas>
+        </div>
+        <div class="chart-block">
+            <canvas id="chart-confidence" height="120"></canvas>
+        </div>
+        <div style="overflow-x:auto;">
+            <table class="dashboard-table" id="dashboard-table">
+                <thead><tr><th>Ngày</th><th>Số lượng</th><th>Điểm tự tin TB</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    <h2>Phân tích batch ảnh nội thất bằng AI (Realtime)</h2>
+    <div class="batch-form">
+        <label>Số lượng ảnh (batch size): </label>
+        <input type="number" id="batch_size" min="1" value="{{ batch_size }}" required>
+        <button id="start-btn" onclick="startBatch()">Bắt đầu</button>
+        <button id="stop-btn" class="stop-btn" onclick="stopBatch()" disabled>Dừng</button>
+    </div>
+    <div class="progress-bar"><div class="progress-bar-inner" id="progress-bar-inner" style="width:0%"></div></div>
+    <div class="result-box">
+        <h3>Kết quả xử lý:</h3>
+        <div class="log-list" id="log-list"></div>
+    </div>
+    <script>
+        // Dashboard fetch and render
+        async function loadDashboard() {
+            let resp = await fetch('/api/analyze_stats');
+            let data = await resp.json();
+            // Progress
+            let percent = data.total === 0 ? 0 : Math.round((data.analyzed/data.total)*100);
+            document.getElementById('dashboard-progress').innerHTML =
+                `<div style='margin-bottom:6px;'>Đã phân tích: <b>${data.analyzed}</b> / <b>${data.total}</b> (Còn lại: <b>${data.pending}</b>)</div>`+
+                `<div class='progress-bar'><div class='progress-bar-inner' style='width:${percent}%;'></div></div>`;
+            // Table
+            let tbody = document.querySelector('#dashboard-table tbody');
+            tbody.innerHTML = '';
+            data.stats.forEach(s => {
+                tbody.innerHTML += `<tr><td>${s.date}</td><td>${s.count}</td><td>${s.avg_confidence !== null ? s.avg_confidence.toFixed(3) : '-'}</td></tr>`;
+            });
+            // Chart count
+            let ctx1 = document.getElementById('chart-count').getContext('2d');
+            let chart1 = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: data.stats.map(s=>s.date),
+                    datasets: [{ label: 'Số lượng/ngày', data: data.stats.map(s=>s.count), backgroundColor: '#007bff' }]
+                },
+                options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+            });
+            // Chart confidence
+            let ctx2 = document.getElementById('chart-confidence').getContext('2d');
+            let chart2 = new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: data.stats.map(s=>s.date),
+                    datasets: [{ label: 'Điểm tự tin TB', data: data.stats.map(s=>s.avg_confidence), borderColor: '#28a745', backgroundColor: 'rgba(40,167,69,0.1)', tension:0.2 }]
+                },
+                options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 1 } } }
+            });
+        }
+        loadDashboard();
+        let stopFlag = false;
+        function formatLabel(label) {
+            if (!label || label === 'null') return '<i>Không có</i>';
+            try {
+                let obj = typeof label === 'string' ? JSON.parse(label) : label;
+                if (typeof obj === 'object' && obj !== null) {
+                    let html = '<table style="margin:4px 0 8px 0; font-size:13px; background:#f8f9fa; border-radius:6px;">';
+                    for (const [k, v] of Object.entries(obj)) {
+                        html += `<tr><td style='color:#007bff; font-weight:600;'>${k}</td><td>${typeof v === 'object' ? formatLabel(v) : v}</td></tr>`;
+                    }
+                    html += '</table>';
+                    return html;
+                } else {
+                    return `<pre>${label}</pre>`;
+                }
+            } catch { return `<pre>${label}</pre>`; }
+        }
+        async function startBatch() {
+            stopFlag = false;
+            document.getElementById('start-btn').disabled = true;
+            document.getElementById('stop-btn').disabled = false;
+            const batchSize = parseInt(document.getElementById('batch_size').value);
+            const logList = document.getElementById('log-list');
+            logList.innerHTML = '';
+            updateProgress(0, 1);
+            // Lấy danh sách ảnh
+            let resp = await fetch(`/api/get_batch_images?batch_size=${batchSize}`);
+            let images = await resp.json();
+            let total = images.length;
+            for (let i = 0; i < images.length; i++) {
+                if (stopFlag) {
+                    logMsg('Đã dừng batch.', 'log-err');
+                    break;
+                }
+                let img = images[i];
+                logMsg(`Đang xử lý id=${img.id} ...`, '');
+                let res = await fetch('/api/analyze_image_one', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(img)
+                });
+                let data = await res.json();
+                let html = '';
+                if (data.abt_label_cost || data.abt_label_after) {
+                    if (data.abt_label_cost) html += `<div style='margin:2px 0 2px 0;'><b>Cost:</b> ` + formatLabel(data.abt_label_cost) + '</div>';
+                    if (data.abt_label_after) html += `<div style='margin:2px 0 2px 0;'><b>Sau:</b> ` + formatLabel(data.abt_label_after) + '</div>';
+                }
+                if (data.success) {
+                    logMsg(data.msg + html, 'log-ok');
+                } else {
+                    logMsg(data.msg + html, 'log-err');
+                }
+                updateProgress(i+1, total);
+            }
+            document.getElementById('start-btn').disabled = false;
+            document.getElementById('stop-btn').disabled = true;
+            // Refresh dashboard sau khi batch xong
+            loadDashboard();
+        }
+        function stopBatch() {
+            stopFlag = true;
+            document.getElementById('stop-btn').disabled = true;
+        }
+        function logMsg(msg, cls) {
+            let logList = document.getElementById('log-list');
+            let div = document.createElement('div');
+            if (cls) div.className = cls;
+            // Nếu msg là object, stringify và format
+            if (typeof msg === 'object') {
+                div.innerHTML = formatLabel(msg);
+            } else {
+                div.innerHTML = msg;
+            }
+            logList.appendChild(div);
+            logList.scrollTop = logList.scrollHeight;
+        }
+        function updateProgress(done, total) {
+            let percent = total === 0 ? 0 : Math.round((done/total)*100);
+            document.getElementById('progress-bar-inner').style.width = percent + '%';
+        }
+    </script>
+</body>
+</html> 

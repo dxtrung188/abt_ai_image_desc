@@ -1,0 +1,26 @@
+[
+  {
+    "image": "furniture_11 (1).jpg",
+    "result": "```json\n{\n  \"loai_san_pham\": \"sofa\",\n  \"chat_lieu\": \"da\",\n  \"mau_sac\": \"trắng ngà\",\n  \"phong_cach_thiet_ke\": \"hiện đại\",\n  \"kieu_dang\": \"cong mềm\",\n  \"chuc_nang_phu\": \"Không rõ\",\n  \"dac_diem_nhan_dang\": \"lưng tựa có nếp gấp dọc\",\n  \"chi_so_tin_cay\": 0.95\n}\n```"
+  },
+  {
+    "image": "furniture_14.jpg",
+    "result": "I'm sorry, but this image seems to be of an electronic device that doesn't fit the categories of interior products like furniture or decor. Please provide a suitable interior product image for classification."
+  },
+  {
+    "image": "furniture_2 (3).jpg",
+    "result": "```json\n{\n  \"loai_san_pham\": \"tủ sách\",\n  \"chat_lieu\": \"gỗ\",\n  \"mau_sac\": \"gỗ sáng\",\n  \"phong_cach_thiet_ke\": \"hiện đại\",\n  \"kieu_dang\": \"khối hộp\",\n  \"chuc_nang_phu\": \"lưu trữ sách\",\n  \"dac_diem_nhan_dang\": \"nhiều ngăn kệ nhỏ, có ngăn kéo phía dưới\",\n  \"chi_so_tin_cay\": 0.95\n}\n```"
+  },
+  {
+    "image": "furniture_20 (1).jpg",
+    "result": "```json\n{\n  \"loai_san_pham\": \"bàn\",\n  \"chat_lieu\": \"gỗ\",\n  \"mau_sac\": \"gỗ sáng\",\n  \"phong_cach_thiet_ke\": \"hiện đại\",\n  \"kieu_dang\": \"chân thấp\",\n  \"chuc_nang_phu\": \"trang trí\",\n  \"dac_diem_nhan_dang\": \"mặt bàn cong mềm với chân nghiêng\",\n  \"chi_so_tin_cay\": 0.95\n}\n```"
+  },
+  {
+    "image": "furniture_5.jpg",
+    "result": "```json\n{\n  \"loai_san_pham\": \"Đèn\",\n  \"chat_lieu\": \"Kim loại\",\n  \"mau_sac\": \"Đen và be\",\n  \"phong_cach_thiet_ke\": \"Hiện đại\",\n  \"kieu_dang\": \"Trụ đứng với thân lượn sóng\",\n  \"chuc_nang_phu\": \"Chiếu sáng\",\n  \"dac_diem_nhan_dang\": \"Thân đèn có hình dạng lượn sóng độc đáo\",\n  \"chi_so_tin_cay\": 0.95\n}\n```"
+  },
+  {
+    "image": "furniture_6.jpg",
+    "result": "```json\n{\n  \"loai_san_pham\": \"bàn\",\n  \"chat_lieu\": \"kim loại\",\n  \"mau_sac\": \"đen và vàng\",\n  \"phong_cach_thiet_ke\": \"hiện đại\",\n  \"kieu_dang\": \"trụ đứng\",\n  \"chuc_nang_phu\": \"trang trí\",\n  \"dac_diem_nhan_dang\": \"mặt bàn tròn với chân trụ vàng\",\n  \"chi_so_tin_cay\": 0.95\n}\n```"
+  }
+]

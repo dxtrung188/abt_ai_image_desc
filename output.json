@@ -1,0 +1,26 @@
+[
+  {
+    "image": "furniture_11 (1).jpg",
+    "result": "| Nhóm thuộc tính         | Giá trị mô tả chi tiết                                   |\n|-------------------------|-------------------------------------------------------|\n| Loại sản phẩm           | Sofa                                                  |\n| Chất liệu               | Da                                                    |\n| Màu sắc                 | Be                                                    |\n| Phong cách thiết kế     | Hiện đại                                              |\n| Kiểu dáng               | Khối hộp, lưng cong                                  |\n| Chức năng phụ           | Trang trí                                             |\n| Đặc điểm nhận dạng      | Lưng ghế với các đường gấp nếp nổi bật                |\n| Chỉ số tin cậy          | 0.95                                                  |"
+  },
+  {
+    "image": "furniture_14.jpg",
+    "result": "I am unable to provide further information about the image."
+  },
+  {
+    "image": "furniture_2 (3).jpg",
+    "result": "| Nhóm thuộc tính        | Giá trị mô tả chi tiết                     |\n|------------------------|-------------------------------------------|\n| Loại sản phẩm          | Giá sách                                  |\n| Chất liệu              | Gỗ                                        |\n| Màu sắc                | Gỗ nâu nhạt                               |\n| Phong cách thiết kế    | Hiện đại                                  |\n| Kiểu dáng              | Khối hộp, có nhiều ngăn                   |\n| Chức năng phụ          | Lưu trữ sách, có ngăn kéo ở dưới cùng     |\n| Đặc điểm nhận dạng     | Nhiều ngăn, bố trí sách đa dạng          |\n| Chỉ số tin cậy         | 0.95                                      |"
+  },
+  {
+    "image": "furniture_20 (1).jpg",
+    "result": "\\[\n\\begin{array}{|c|c|}\n\\hline\n\\text{Nhóm thuộc tính} & \\text{Giá trị mô tả chi tiết} \\\\\n\\hline\n\\text{Loại sản phẩm} & Bàn \\\\\n\\hline\n\\text{Chất liệu} & Gỗ \\\\\n\\hline\n\\text{Màu sắc} & Gỗ sáng \\\\\n\\hline\n\\text{Phong cách thiết kế} & Hiện đại \\\\\n\\hline\n\\text{Kiểu dáng} & Chân thấp, mặt cong mềm \\\\\n\\hline\n\\text{Chức năng phụ} & Trang trí \\\\\n\\hline\n\\text{Đặc điểm nhận dạng} & Mặt bàn cong, chân gỗ chếch ra \\\\\n\\hline\n\\text{Chỉ số tin cậy} & 0.95 \\\\\n\\hline\n\\end{array}\n\\]"
+  },
+  {
+    "image": "furniture_5.jpg",
+    "result": "| Nhóm thuộc tính         | Giá trị mô tả chi tiết                              |\n|-------------------------|----------------------------------------------------|\n| Loại sản phẩm           | Đèn đứng                                          |\n| Chất liệu               | Kim loại, vải                                     |\n| Màu sắc                 | Đen, be                                           |\n| Phong cách thiết kế     | Hiện đại                                          |\n| Kiểu dáng               | Trụ đứng, chân cong                               |\n| Chức năng phụ           | Chiếu sáng                                       |\n| Đặc điểm nhận dạng      | Chân đèn dạng sóng                               |\n| Chỉ số tin cậy          | 0.95                                              |"
+  },
+  {
+    "image": "furniture_6.jpg",
+    "result": "\\[\n\\begin{array}{|c|c|}\n\\hline\n\\text{Nhóm thuộc tính} & \\text{Giá trị mô tả chi tiết} \\\\\n\\hline\nLoại sản phẩm & Bàn \\\\\n\\hline\nChất liệu & Kim loại, mặt đá \\\\\n\\hline\nMàu sắc & Đen, vàng đồng \\\\\n\\hline\nPhong cách thiết kế & Hiện đại \\\\\n\\hline\nKiểu dáng & Hình trụ, mặt tròn \\\\\n\\hline\nChức năng phụ & Trang trí \\\\\n\\hline\nĐặc điểm nhận dạng & Chân trụ vàng đồng, mặt bàn đá đen \\\\\n\\hline\nChỉ số tin cậy & 0.95 \\\\\n\\hline\n\\end{array}\n\\]"
+  }
+]

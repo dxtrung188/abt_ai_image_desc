@@ -1,0 +1,116 @@
+[
+  {
+    "image": "furniture_11 (1).jpg",
+    "result": {
+      "loai_san_pham": "sofa",
+      "chat_lieu": "da",
+      "mau_sac": "trắng ngà",
+      "phong_cach_thiet_ke": "hiện đại",
+      "kieu_dang": "cong mềm",
+      "chuc_nang_phu": "trang trí",
+      "dac_diem_nhan_dang": "lưng ghế có họa tiết gấp nếp dọc",
+      "chi_so_tin_cay": 0.95
+    },
+    "input_tokens": 1850,
+    "output_tokens": 122,
+    "total_tokens": 1972,
+    "usd_cost": 0.01108,
+    "vnd_cost": 299.15999999999997,
+    "elapsed_seconds": 9.4336519241333
+  },
+  {
+    "image": "furniture_14.jpg",
+    "result": {
+      "loai_san_pham": "Bàn phím gắn liền với máy tính bảng",
+      "chat_lieu": "Nhựa, kim loại",
+      "mau_sac": "Đen",
+      "phong_cach_thiet_ke": "Hiện đại",
+      "kieu_dang": "Khối hộp",
+      "chuc_nang_phu": "Bảo vệ, gõ văn bản",
+      "dac_diem_nhan_dang": "Thiết kế mỏng, tích hợp bàn phím với bảo vệ màn hình",
+      "chi_so_tin_cay": 0.95
+    },
+    "input_tokens": 1850,
+    "output_tokens": 142,
+    "total_tokens": 1992,
+    "usd_cost": 0.01138,
+    "vnd_cost": 307.26,
+    "elapsed_seconds": 9.62080454826355
+  },
+  {
+    "image": "furniture_2 (3).jpg",
+    "result": {
+      "loai_san_pham": "kệ sách",
+      "chat_lieu": "gỗ",
+      "mau_sac": "gỗ sáng",
+      "phong_cach_thiet_ke": "hiện đại",
+      "kieu_dang": "khối hộp",
+      "chuc_nang_phu": "chứa đồ",
+      "dac_diem_nhan_dang": "nhiều ngăn, hình chữ nhật",
+      "chi_so_tin_cay": 0.95
+    },
+    "input_tokens": 1850,
+    "output_tokens": 119,
+    "total_tokens": 1969,
+    "usd_cost": 0.011035,
+    "vnd_cost": 297.945,
+    "elapsed_seconds": 4.662132501602173
+  },
+  {
+    "image": "furniture_20 (1).jpg",
+    "result": {
+      "loai_san_pham": "bàn",
+      "chat_lieu": "gỗ",
+      "mau_sac": "gỗ sáng",
+      "phong_cach_thiet_ke": "hiện đại",
+      "kieu_dang": "chân thấp",
+      "chuc_nang_phu": "trang trí",
+      "dac_diem_nhan_dang": "mặt bàn cong mềm, chân kiểu dáng nhọn",
+      "chi_so_tin_cay": 0.95
+    },
+    "input_tokens": 1850,
+    "output_tokens": 120,
+    "total_tokens": 1970,
+    "usd_cost": 0.011049999999999999,
+    "vnd_cost": 298.34999999999997,
+    "elapsed_seconds": 5.3771748542785645
+  },
+  {
+    "image": "furniture_5.jpg",
+    "result": {
+      "loai_san_pham": "đèn",
+      "chat_lieu": "kim loại",
+      "mau_sac": "đen và be",
+      "phong_cach_thiet_ke": "hiện đại",
+      "kieu_dang": "trụ đứng",
+      "chuc_nang_phu": "chiếu sáng",
+      "dac_diem_nhan_dang": "thân đèn lượn sóng",
+      "chi_so_tin_cay": 0.95
+    },
+    "input_tokens": 1850,
+    "output_tokens": 117,
+    "total_tokens": 1967,
+    "usd_cost": 0.011005,
+    "vnd_cost": 297.135,
+    "elapsed_seconds": 6.5162999629974365
+  },
+  {
+    "image": "furniture_6.jpg",
+    "result": {
+      "loai_san_pham": "bàn",
+      "chat_lieu": "kim loại, đá",
+      "mau_sac": "đen, vàng kim loại",
+      "phong_cach_thiet_ke": "hiện đại",
+      "kieu_dang": "trụ đứng, mặt bàn tròn",
+      "chuc_nang_phu": "trang trí",
+      "dac_diem_nhan_dang": "chân bàn dạng trụ, mặt bàn bằng đá",
+      "chi_so_tin_cay": 0.95
+    },
+    "input_tokens": 1850,
+    "output_tokens": 128,
+    "total_tokens": 1978,
+    "usd_cost": 0.01117,
+    "vnd_cost": 301.59,
+    "elapsed_seconds": 7.181586027145386
+  }
+]

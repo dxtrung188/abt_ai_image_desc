@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lịch sử lọc sản phẩm</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: Arial, sans-serif; background: #f8f9fa; margin: 0; }
+        .container { max-width: 1200px; margin: 24px auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); padding: 24px; }
+        h2 { color: #007bff; margin-bottom: 18px; }
+        .history-table { width: 100%; border-collapse: collapse; margin-top: 18px; font-size: 15px; }
+        .history-table th, .history-table td { padding: 8px 10px; border-bottom: 1px solid #eee; text-align: center; }
+        .history-table th { background: #f5f5f5; color: #007bff; font-weight: 600; }
+        .history-table tr:last-child td { border-bottom: none; }
+        .history-table img { max-width: 80px; max-height: 80px; border-radius: 6px; }
+        .chart-block { margin: 24px 0; }
+        .user-bar { display: inline-block; height: 18px; background: #007bff; border-radius: 6px; margin-right: 8px; vertical-align: middle; }
+        .user-label { font-size: 15px; color: #333; margin-right: 8px; }
+        .user-count { font-weight: 600; color: #007bff; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h2>Lịch sử lọc sản phẩm</h2>
+        <div class="chart-block">
+            <canvas id="chart-time" height="120"></canvas>
+        </div>
+        <div class="chart-block">
+            <canvas id="chart-user" height="120"></canvas>
+        </div>
+        <div style="overflow-x:auto;">
+            <table class="history-table" id="history-table">
+                <thead><tr><th>ID</th><th>Ảnh gốc</th><th>Ảnh chọn</th><th>Tên sản phẩm</th><th>Người lọc</th><th>Thời gian thao tác (giây)</th><th>Thời điểm</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        async function loadHistory() {
+            let resp = await fetch('/api/filter_history');
+            let data = await resp.json();
+            let tbody = document.querySelector('#history-table tbody');
+            tbody.innerHTML = '';
+            data.forEach(item => {
+                tbody.innerHTML += `<tr>
+                    <td>${item.id}</td>
+                    <td>${item.image_url ? `<img src='${item.image_url}' loading='lazy'>` : ''}</td>
+                    <td>${item.candidate_img ? `<img src='${item.candidate_img}' loading='lazy'>` : ''}</td>
+                    <td>${item.subject_trans || ''}</td>
+                    <td>${item.user || ''}</td>
+                    <td>${item.elapsed_time !== null && item.elapsed_time !== undefined ? item.elapsed_time : ''}</td>
+                    <td>${item.timestamp ? item.timestamp.replace('T','<br>') : ''}</td>
+                </tr>`;
+            });
+        }
+        async function loadHistoryStats() {
+            let resp = await fetch('/api/filter_history_stats');
+            let data = await resp.json();
+            // Chart thời gian thao tác trung bình theo ngày
+            let ctx1 = document.getElementById('chart-time').getContext('2d');
+            new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: data.stats.map(s=>s.date),
+                    datasets: [{ label: 'Thời gian thao tác TB (giây)', data: data.stats.map(s=>s.avg_time), borderColor: '#007bff', backgroundColor: 'rgba(0,123,255,0.1)', tension:0.2 }]
+                },
+                options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+            });
+            // Chart top user
+            let ctx2 = document.getElementById('chart-user').getContext('2d');
+            let users = Object.keys(data.user_total);
+            let counts = Object.values(data.user_total);
+            new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: users,
+                    datasets: [{ label: 'Số lượng lọc', data: counts, backgroundColor: '#28a745' }]
+                },
+                options: { plugins: { legend: { display: false } }, indexAxis: 'y', scales: { x: { beginAtZero: true } } }
+            });
+        }
+        loadHistory();
+        loadHistoryStats();
+    </script>
+</body>
+</html> 

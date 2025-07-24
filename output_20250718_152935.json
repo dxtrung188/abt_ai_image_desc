@@ -1,0 +1,80 @@
+[
+  {
+    "image": "furniture_11 (1).jpg",
+    "result": {
+      "loai_san_pham": "sofa",
+      "chat_lieu": "da",
+      "mau_sac": "trắng ngà",
+      "phong_cach_thiet_ke": "hiện đại",
+      "kieu_dang": "cong mềm",
+      "chuc_nang_phu": "Không có",
+      "dac_diem_nhan_dang": "lưng ghế có rãnh sọc đặc trưng",
+      "chi_so_tin_cay": 0.95
+    }
+  },
+  {
+    "image": "furniture_14.jpg",
+    "result": {
+      "loai_san_pham": "bàn phím",
+      "chat_lieu": "kim loại",
+      "mau_sac": "đen",
+      "phong_cach_thiet_ke": "hiện đại",
+      "kieu_dang": "khối hộp",
+      "chuc_nang_phu": "dùng với tablet",
+      "dac_diem_nhan_dang": "kết hợp với máy tính bảng",
+      "chi_so_tin_cay": 0.95
+    }
+  },
+  {
+    "image": "furniture_2 (3).jpg",
+    "result": {
+      "loai_san_pham": "tủ sách",
+      "chat_lieu": "gỗ",
+      "mau_sac": "gỗ sáng",
+      "phong_cach_thiet_ke": "hiện đại",
+      "kieu_dang": "khối hộp",
+      "chuc_nang_phu": "lưu trữ",
+      "dac_diem_nhan_dang": "nhiều ngăn chứa sách",
+      "chi_so_tin_cay": 0.95
+    }
+  },
+  {
+    "image": "furniture_20 (1).jpg",
+    "result": {
+      "loai_san_pham": "bàn",
+      "chat_lieu": "gỗ",
+      "mau_sac": "gỗ sáng",
+      "phong_cach_thiet_ke": "hiện đại",
+      "kieu_dang": "chân thấp",
+      "chuc_nang_phu": "trang trí",
+      "dac_diem_nhan_dang": "mặt bàn hình chữ nhật bo cạnh, chân bàn xòe",
+      "chi_so_tin_cay": 0.95
+    }
+  },
+  {
+    "image": "furniture_5.jpg",
+    "result": {
+      "loai_san_pham": "đèn",
+      "chat_lieu": "kim loại",
+      "mau_sac": "đen",
+      "phong_cach_thiet_ke": "hiện đại",
+      "kieu_dang": "trụ đứng",
+      "chuc_nang_phu": "chiếu sáng",
+      "dac_diem_nhan_dang": "thân dạng sóng",
+      "chi_so_tin_cay": 0.95
+    }
+  },
+  {
+    "image": "furniture_6.jpg",
+    "result": {
+      "loai_san_pham": "bàn",
+      "chat_lieu": "kim loại và đá",
+      "mau_sac": "đen và vàng",
+      "phong_cach_thiet_ke": "hiện đại",
+      "kieu_dang": "trụ đứng",
+      "chuc_nang_phu": "trang trí",
+      "dac_diem_nhan_dang": "mặt bàn đá tròn và chân trụ vàng",
+      "chi_so_tin_cay": 0.95
+    }
+  }
+]
