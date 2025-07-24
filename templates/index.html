@@ -124,11 +124,15 @@
             localStorage.setItem('abt_user', user);
             sessionStorage.setItem('abt_user', user);
         }
+        function isValidUsername(username) {
+            // Chỉ cho phép chữ cái, số, dấu gạch dưới, không dấu, không khoảng trắng
+            return /^[a-zA-Z0-9_]+$/.test(username);
+        }
         function checkUserInput() {
             var user = document.getElementById('user').value.trim();
             var submitBtn = document.getElementById('submit-btn');
             var skipBtn = document.getElementById('skip-btn');
-            if (user) {
+            if (user && isValidUsername(user)) {
                 submitBtn.disabled = false;
                 skipBtn.disabled = false;
             } else {
@@ -158,6 +162,12 @@
             document.getElementById('submit-btn').disabled = true;
         }
         function beforeSubmit() {
+            let user = document.getElementById('user').value.trim();
+            if (!isValidUsername(user)) {
+                alert('Username chỉ được phép chứa chữ cái, số, dấu gạch dưới, không dấu, không khoảng trắng!');
+                document.getElementById('user').focus();
+                return false;
+            }
             let elapsed = Math.floor((Date.now() - startTime) / 1000);
             document.getElementById('elapsed_time').value = elapsed;
             clearInterval(timerInterval);
@@ -298,6 +308,12 @@
             window.location.href = '/';
         }
         function skipCandidate() {
+            var user = document.getElementById('user').value.trim();
+            if (!isValidUsername(user)) {
+                alert('Username chỉ được phép chứa chữ cái, số, dấu gạch dưới, không dấu, không khoảng trắng!');
+                document.getElementById('user').focus();
+                return;
+            }
             document.getElementById('selected_offer_id').value = '';
             beforeSubmit();
             document.querySelector('form').submit();
