@@ -182,19 +182,6 @@
         <input type="hidden" name="elapsed_time" id="elapsed_time">
         <input type="hidden" name="row_id" value="{{ row_id }}">
         <input type="hidden" name="selected_offer_id" id="selected_offer_id">
-        <div id="user-history-block" style="max-width:900px; margin:24px auto 0 auto; display:none; background:#fff; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.04); padding:18px;">
-            <div style="font-size:18px; font-weight:600; color:#007bff; margin-bottom:10px;">Lịch sử lọc của bạn</div>
-            <div class="dashboard-table-wrapper">
-                <table class="dashboard-table" id="user-history-table">
-                    <thead><tr><th>ID</th><th>Ảnh gốc</th><th>Ảnh chọn</th><th>Tên sản phẩm</th><th>Thời gian thao tác (giây)</th><th>Thời điểm</th><th></th></tr></thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        </div>
-        <div id="edit-banner" style="display:none; background:#fff3cd; color:#856404; border:1px solid #ffeeba; border-radius:8px; padding:10px 18px; margin:18px auto; max-width:900px; text-align:center; font-size:16px; font-weight:600;">
-    <span id="edit-banner-text"></span>
-    <button type="button" onclick="cancelEdit()" style="margin-left:18px; padding:4px 14px; border-radius:6px; background:#007bff; color:#fff; border:none; cursor:pointer;">Hủy chỉnh sửa</button>
-</div>
         <div class="container">
             <div class="left">
                 <h3>Ảnh sản phẩm gốc</h3>
@@ -241,9 +228,23 @@
                 <div style="margin-top:12px; text-align:right;">
                     <button type="button" onclick="resetCandidateSelection()" style="background:none; border:none; color:#007bff; font-size:15px; cursor:pointer;">Bỏ chọn ảnh</button>
                 </div>
+                <div class="submit-row" style="justify-content:center; align-items:center; width:100%; max-width:600px; margin:24px auto 0 auto;">
+                    <button type="submit" class="submit-btn" id="submit-btn" disabled>Submit</button>
+                    <button type="button" class="submit-btn" id="skip-btn" style="background:#6c757d;" onclick="skipCandidate()" disabled>Bỏ qua</button>
+                </div>
             </div>
         </div>
     </form>
+    <!-- Đưa user-history-block ra ngoài form và xuống cuối trang -->
+    <div id="user-history-block" style="max-width:900px; margin:32px auto 0 auto; display:none; background:#fff; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.04); padding:18px;">
+        <div style="font-size:18px; font-weight:600; color:#007bff; margin-bottom:10px;">Lịch sử lọc của bạn</div>
+        <div class="dashboard-table-wrapper">
+            <table class="dashboard-table" id="user-history-table">
+                <thead><tr><th>ID</th><th>Ảnh gốc</th><th>Ảnh chọn</th><th>Tên sản phẩm</th><th>Thời gian thao tác (giây)</th><th>Thời điểm</th><th></th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
     {% endif %}
     <script>
         async function loadUserHistory() {
