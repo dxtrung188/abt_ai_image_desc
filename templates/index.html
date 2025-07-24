@@ -44,6 +44,62 @@
         .submit-btn:hover:enabled { background: #0056b3; }
         @media (max-width: 900px) { .container { flex-direction: column; align-items: stretch; } .left, .right { max-width: 100%; } .submit-row { flex-direction: column; gap: 8px; } }
         @media (max-width: 600px) { .candidates-grid { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); } .left img, .preview-block img { max-height: 180px; } .user-input-block input { font-size: 16px; padding: 12px 10px; } .submit-btn { font-size: 16px; padding: 12px 18px; } }
+        .dashboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            font-size: 15px;
+            margin-top: 8px;
+        }
+        .dashboard-table th, .dashboard-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #f0f0f0;
+            text-align: center;
+        }
+        .dashboard-table th {
+            background: #007bff;
+            color: #fff;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        .dashboard-table tr:last-child td {
+            border-bottom: none;
+        }
+        .dashboard-table tr:hover {
+            background: #f1f7ff;
+            transition: background 0.2s;
+        }
+        .dashboard-table td img {
+            max-width: 60px;
+            max-height: 60px;
+            border-radius: 6px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        }
+        .dashboard-table .no-match {
+            color: #dc3545;
+            font-weight: 600;
+            font-style: italic;
+        }
+        @media (max-width: 700px) {
+            .dashboard-table th, .dashboard-table td {
+                padding: 6px 4px;
+                font-size: 13px;
+            }
+            .dashboard-table td img {
+                max-width: 36px;
+                max-height: 36px;
+            }
+            #user-history-block {
+                padding: 8px;
+            }
+        }
+        .dashboard-table-wrapper {
+            overflow-x: auto;
+            width: 100%;
+        }
     </style>
     <script>
         let startTime = Date.now();
@@ -130,7 +186,7 @@
         <input type="hidden" name="selected_offer_id" id="selected_offer_id">
         <div id="user-history-block" style="max-width:900px; margin:24px auto 0 auto; display:none; background:#fff; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.04); padding:18px;">
     <div style="font-size:18px; font-weight:600; color:#007bff; margin-bottom:10px;">Lịch sử lọc của bạn</div>
-    <div style="overflow-x:auto;">
+    <div class="dashboard-table-wrapper">
         <table class="dashboard-table" id="user-history-table">
             <thead><tr><th>ID</th><th>Ảnh gốc</th><th>Ảnh chọn</th><th>Tên sản phẩm</th><th>Thời gian thao tác (giây)</th><th>Thời điểm</th><th></th></tr></thead>
             <tbody></tbody>
@@ -204,9 +260,9 @@
             data.forEach(item => {
                 tbody.innerHTML += `<tr>
                     <td>${item.id}</td>
-                    <td>${item.image_url ? `<img src='${item.image_url}' loading='lazy' style='max-width:60px;'>` : ''}</td>
-                    <td>${item.candidate_img ? `<img src='${item.candidate_img}' loading='lazy' style='max-width:60px;'>` : ''}</td>
-                    <td>${item.subject_trans || ''}</td>
+                    <td>${item.image_url ? `<img src='${item.image_url}' loading='lazy'>` : ''}</td>
+                    <td>${item.offer_id === null ? `<span class='no-match'>Không có SP trùng</span>` : (item.candidate_img ? `<img src='${item.candidate_img}' loading='lazy'>` : '')}</td>
+                    <td>${item.offer_id === null ? `<span class='no-match'>Không có SP trùng</span>` : (item.subject_trans || '')}</td>
                     <td>${item.elapsed_time !== null && item.elapsed_time !== undefined ? item.elapsed_time : ''}</td>
                     <td>${item.timestamp ? item.timestamp.replace('T','<br>') : ''}</td>
                     <td><button type='button' onclick='chooseAgain(${item.id})' style='padding:4px 12px; border-radius:6px; background:#007bff; color:#fff; border:none; cursor:pointer;'>Chọn lại</button></td>
