@@ -68,10 +68,23 @@
             localStorage.setItem('abt_user', user);
             sessionStorage.setItem('abt_user', user);
         }
+        function checkUserInput() {
+            var user = document.getElementById('user').value.trim();
+            var submitBtn = document.getElementById('submit-btn');
+            var skipBtn = document.getElementById('skip-btn');
+            if (user) {
+                submitBtn.disabled = false;
+                skipBtn.disabled = false;
+            } else {
+                submitBtn.disabled = true;
+                skipBtn.disabled = true;
+            }
+        }
         // Khi load trang, tự động điền user nếu có (ưu tiên sessionStorage, fallback localStorage)
         window.onload = function() {
             var user = sessionStorage.getItem('abt_user') || localStorage.getItem('abt_user');
             if (user) document.getElementById('user').value = user;
+            checkUserInput();
             var first = document.querySelector('.candidate');
             if (first) first.click();
             // Nếu chưa chọn candidate thì disable submit
@@ -104,10 +117,10 @@
         <div class="submit-row" style="justify-content:center; align-items:center; width:100%; max-width:600px; margin:0 auto 18px auto;">
             <div class="user-input-block">
                 <label for="user" style="font-size:18px; font-weight:600; color:#007bff;">Người chọn (username/điện thoại):</label><br>
-                <input type="text" name="user" id="user" required oninput="saveUserToStorage()" autocomplete="username">
+                <input type="text" name="user" id="user" required oninput="saveUserToStorage(); checkUserInput()" autocomplete="username">
             </div>
-            <button type="submit" class="submit-btn" id="submit-btn">Submit</button>
-            <button type="button" class="submit-btn" style="background:#6c757d;" onclick="skipCandidate()">Bỏ qua</button>
+            <button type="submit" class="submit-btn" id="submit-btn" disabled>Submit</button>
+            <button type="button" class="submit-btn" id="skip-btn" style="background:#6c757d;" onclick="skipCandidate()" disabled>Bỏ qua</button>
         </div>
         <div style="text-align:center; margin-bottom:10px; font-size:16px; color:#555;">
             Thời gian thao tác: <span id="elapsed-time">0</span> giây
