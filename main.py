@@ -145,8 +145,9 @@ async def read_root(request: Request, edit_id: int = None):
 @app.post("/submit")
 async def submit_best_match(request: Request, row_id: int = Form(...), selected_offer_id: str = Form(...), user: str = Form(...), elapsed_time: int = Form(...)):
     pool = await get_pg_pool(DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME)
+    offer_id = selected_offer_id if selected_offer_id else None
     best_match = {
-        "offer_id": selected_offer_id,
+        "offer_id": offer_id,
         "timestamp": datetime.now().isoformat(),
         "review_status": 0,
         "user": user,

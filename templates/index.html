@@ -107,6 +107,7 @@
                 <input type="text" name="user" id="user" required oninput="saveUserToStorage()" autocomplete="username">
             </div>
             <button type="submit" class="submit-btn" id="submit-btn">Submit</button>
+            <button type="button" class="submit-btn" style="background:#6c757d;" onclick="skipCandidate()">Bỏ qua</button>
         </div>
         <div style="text-align:center; margin-bottom:10px; font-size:16px; color:#555;">
             Thời gian thao tác: <span id="elapsed-time">0</span> giây
@@ -227,6 +228,11 @@
         }
         function cancelEdit() {
             window.location.href = '/';
+        }
+        function skipCandidate() {
+            document.getElementById('selected_offer_id').value = '';
+            beforeSubmit();
+            document.querySelector('form').submit();
         }
         // Đảm bảo row_id input có id để JS cập nhật
         document.getElementsByName('row_id')[0].id = 'row_id';
