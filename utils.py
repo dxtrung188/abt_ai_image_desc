@@ -96,7 +96,7 @@ async def get_pg_pool(DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME):
         password=DB_PASSWORD,
         database=DB_NAME,
         min_size=1,
-        max_size=5
+        max_size=2
     )
 
 async def get_next_image_to_label(pool):

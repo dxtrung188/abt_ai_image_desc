@@ -378,7 +378,10 @@ async def api_filter_history_stats():
         ''')
         import json as pyjson
         from collections import defaultdict
-        day_stats = defaultdict(lambda: {"count": 0, "sum_time": 0, "users": defaultdict(int)})
+        # Thống kê theo ngày
+        day_stats = defaultdict(lambda: {"count": 0, "sum_time": 0, "users": defaultdict(lambda: {"count": 0, "sum_time": 0})})
+        # Thống kê theo user
+        user_stats = defaultdict(lambda: {"count": 0, "sum_time": 0})
         for row in rows:
             try:
                 bm = pyjson.loads(row["best_match"])
@@ -389,21 +392,39 @@ async def api_filter_history_stats():
                     elapsed = int(elapsed)
                 else:
                     elapsed = 0
+                # Theo ngày
                 day_stats[ts]["count"] += 1
                 day_stats[ts]["sum_time"] += elapsed
-                day_stats[ts]["users"][user] += 1
+                day_stats[ts]["users"][user]["count"] += 1
+                day_stats[ts]["users"][user]["sum_time"] += elapsed
+                # Theo user
+                user_stats[user]["count"] += 1
+                user_stats[user]["sum_time"] += elapsed
             except Exception:
                 pass
-        stats = []
+        # Chuẩn bị dữ liệu trả về
+        stats_by_day = []
         for day, v in sorted(day_stats.items()):
             avg_time = v["sum_time"] / v["count"] if v["count"] else 0
-            stats.append({"date": day, "count": v["count"], "avg_time": avg_time, "users": dict(v["users"])})
-        # Top user tổng hợp
-        user_total = defaultdict(int)
-        for s in stats:
-            for u, c in s["users"].items():
-                user_total[u] += c
-        return JSONResponse({"stats": stats, "user_total": dict(user_total)})
+            stats_by_day.append({
+                "date": day,
+                "count": v["count"],
+                "sum_time": v["sum_time"],
+                "avg_time": avg_time
+            })
+        stats_by_user = []
+        for user, v in sorted(user_stats.items()):
+            avg_time = v["sum_time"] / v["count"] if v["count"] else 0
+            stats_by_user.append({
+                "user": user,
+                "count": v["count"],
+                "sum_time": v["sum_time"],
+                "avg_time": avg_time
+            })
+        return JSONResponse({
+            "stats_by_day": stats_by_day,
+            "stats_by_user": stats_by_user
+        })
 
 @app.get("/api/filter_item")
 async def api_filter_item(id: int):
