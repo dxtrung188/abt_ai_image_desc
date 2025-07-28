@@ -313,7 +313,7 @@ async def api_filter_history(user: str = None):
             query = '''
                 SELECT id, image_url, best_match, products_1688_filtered
                 FROM abt_image_to_products_1688
-                WHERE best_match IS NOT NULL AND best_match->>'user' = $1
+                WHERE best_match IS NOT NULL AND best_match->>'user' = $1::text
                 ORDER BY id DESC
                 LIMIT 500
             '''
@@ -363,7 +363,290 @@ async def api_filter_history(user: str = None):
                 "elapsed_time": elapsed_time,
                 "timestamp": timestamp
             })
-        return JSONResponse(result)
+        return JSONResponse(result) 
+
+@app.get("/admin", response_class=HTMLResponse)
+async def admin_page(request: Request):
+    return templates.TemplateResponse("admin_filtered_products.html", {"request": request})
+
+@app.get("/api/admin_stats")
+async def api_admin_stats():
+    pool = await get_pg_pool(DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME)
+    async with pool.acquire() as conn:
+        # Tổng số sản phẩm đã filter
+        total = await conn.fetchval("SELECT COUNT(*) FROM abt_image_to_products_1688 WHERE best_match IS NOT NULL")
+        
+        # Số sản phẩm đã verify (pass)
+        pass_count = await conn.fetchval("""
+            SELECT COUNT(*) FROM abt_image_to_products_1688 
+            WHERE best_match IS NOT NULL AND verify_result IS NOT NULL 
+            AND verify_result->>'result' = 'pass'::text
+        """)
+        
+        # Số sản phẩm đã verify (fail)
+        fail_count = await conn.fetchval("""
+            SELECT COUNT(*) FROM abt_image_to_products_1688 
+            WHERE best_match IS NOT NULL AND verify_result IS NOT NULL 
+            AND verify_result->>'result' = 'fail'::text
+        """)
+        
+        # Số sản phẩm chưa verify
+        pending_count = await conn.fetchval("""
+            SELECT COUNT(*) FROM abt_image_to_products_1688 
+            WHERE best_match IS NOT NULL AND verify_result IS NULL
+        """)
+        
+        return JSONResponse({
+            "total": total,
+            "pass": pass_count,
+            "fail": fail_count,
+            "pending": pending_count
+        })
+
+@app.get("/api/admin_users")
+async def api_admin_users():
+    pool = await get_pg_pool(DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME)
+    async with pool.acquire() as conn:
+        rows = await conn.fetch("""
+            SELECT DISTINCT best_match->>'user' as user 
+            FROM abt_image_to_products_1688 
+            WHERE best_match IS NOT NULL AND best_match->>'user' IS NOT NULL
+            ORDER BY user
+        """)
+        return JSONResponse([row["user"] for row in rows])
+
+@app.get("/api/admin_filtered_products")
+async def api_admin_filtered_products(
+    status: str = None,
+    user: str = None,
+    date_from: str = None,
+    date_to: str = None
+):
+    pool = await get_pg_pool(DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME)
+    async with pool.acquire() as conn:
+        # Xây dựng query với điều kiện lọc
+        where_conditions = ["best_match IS NOT NULL"]
+        params = []
+        param_count = 0
+        
+        if status == "pass":
+            where_conditions.append("verify_result IS NOT NULL AND verify_result->>'result' = 'pass'::text")
+        elif status == "fail":
+            where_conditions.append("verify_result IS NOT NULL AND verify_result->>'result' = 'fail'::text")
+        elif status == "pending":
+            where_conditions.append("verify_result IS NULL")
+        
+        if user:
+            param_count += 1
+            where_conditions.append(f"best_match->>'user' = ${param_count}::text")
+            params.append(user)
+        
+        if date_from:
+            param_count += 1
+            where_conditions.append(f"best_match->>'timestamp' >= ${param_count}::text")
+            params.append(date_from + "T00:00:00")
+        
+        if date_to:
+            param_count += 1
+            where_conditions.append(f"best_match->>'timestamp' <= ${param_count}::text")
+            params.append(date_to + "T23:59:59")
+        
+        where_clause = " AND ".join(where_conditions)
+        
+        # Lấy tất cả dữ liệu
+        data_query = f"""
+            SELECT id, image_url, best_match, verify_result, products_1688_filtered
+            FROM abt_image_to_products_1688 
+            WHERE {where_clause}
+            ORDER BY id DESC
+        """
+        
+        rows = await conn.fetch(data_query, *params)
+        
+        # Xử lý dữ liệu
+        products = []
+        for row in rows:
+            try:
+                best_match = json.loads(row["best_match"]) if row["best_match"] else {}
+                verify_result = json.loads(row["verify_result"]) if row["verify_result"] else None
+                
+                # Lấy thông tin candidate
+                candidate_img = None
+                subject_trans = None
+                if row["products_1688_filtered"]:
+                    try:
+                        candidates_data = json.loads(row["products_1688_filtered"])
+                        candidates = candidates_data.get("candidates", [])
+                        offer_id = best_match.get("offer_id")
+                        for candidate in candidates:
+                            if candidate.get("offer_id") == offer_id:
+                                subject_trans = candidate.get("subject_trans")
+                                break
+                    except Exception:
+                        pass
+                
+                # Lấy ảnh candidate
+                if best_match.get("offer_id"):
+                    cand_row = await conn.fetchrow(
+                        'SELECT image_url FROM abt_products_1688 WHERE offer_id = $1', 
+                        best_match["offer_id"]
+                    )
+                    if cand_row:
+                        candidate_img = cand_row["image_url"]
+                
+                products.append({
+                    "id": row["id"],
+                    "image_url": row["image_url"],
+                    "candidate_img": candidate_img,
+                    "subject_trans": subject_trans,
+                    "user": best_match.get("user"),
+                    "elapsed_time": best_match.get("elapsed_time"),
+                    "timestamp": best_match.get("timestamp"),
+                    "verify_result": verify_result
+                })
+            except Exception as e:
+                print(f"Lỗi xử lý row {row['id']}: {e}")
+                continue
+        
+        return JSONResponse({
+            "products": products,
+            "total": len(products)
+        })
+
+@app.get("/api/admin_product_detail")
+async def api_admin_product_detail(id: int):
+    pool = await get_pg_pool(DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME)
+    async with pool.acquire() as conn:
+        row = await conn.fetchrow('''
+            SELECT id, image_url, best_match, verify_result, products_1688_filtered, abt_label
+            FROM abt_image_to_products_1688 WHERE id = $1
+        ''', id)
+        
+        if not row:
+            return JSONResponse({"error": "Not found"}, status_code=404)
+        
+        try:
+            try:
+                best_match = json.loads(row["best_match"]) if row["best_match"] else {}
+            except Exception:
+                best_match = {}
+            
+            try:
+                verify_result = json.loads(row["verify_result"]) if row["verify_result"] else None
+            except Exception:
+                verify_result = None
+                
+            try:
+                abt_label = json.loads(row["abt_label"]) if row["abt_label"] else None
+            except Exception:
+                abt_label = None
+            
+            # Lấy thông tin candidate từ products_1688_filtered
+            if row["products_1688_filtered"]:
+                try:
+                    candidates_data = json.loads(row["products_1688_filtered"])
+                    candidates = candidates_data.get("candidates", [])
+                    offer_id = best_match.get("offer_id")
+                    for candidate in candidates:
+                        if candidate.get("offer_id") == offer_id:
+                            subject_trans = candidate.get("subject_trans")
+                            break
+                except Exception as e:
+                    print(f"Lỗi khi parse products_1688_filtered: {e}")
+            
+            
+
+            # Lấy ảnh và thông tin candidate
+            candidate_img = None
+            subject_trans = None
+            candidate_price = None
+            if best_match.get("offer_id"):
+                try:
+                    cand_row = await conn.fetchrow(
+                        'SELECT image_url, subject_trans, price FROM abt_products_1688 WHERE offer_id = $1', 
+                        best_match["offer_id"]
+                    )
+                    if cand_row:
+                        candidate_img = cand_row["image_url"]
+                        subject_trans = cand_row["subject_trans"]
+                        candidate_price = convert_decimal(cand_row["price"]) if cand_row["price"] else None
+                except Exception as e:
+                    print(f"Lỗi khi lấy candidate info: {e}")
+                    
+            
+
+            # Lấy 10 ảnh từ products_1688_filtered
+            other_images = []
+            if row["products_1688_filtered"]:
+                try:
+                    candidates_data = json.loads(row["products_1688_filtered"])
+                    candidates = candidates_data.get("candidates", [])
+                    # Lấy 10 candidate đầu tiên
+                    for candidate in candidates[:10]:
+                        if candidate.get("offer_id"):
+                            # Lấy ảnh từ bảng abt_products_1688
+                            cand_row = await conn.fetchrow(
+                                'SELECT image_url, subject_trans FROM abt_products_1688 WHERE offer_id = $1',
+                                candidate["offer_id"]
+                            )
+                            if cand_row:
+                                other_images.append({
+                                    "id": candidate["offer_id"],
+                                    "image_url": cand_row["image_url"],
+                                    "subject_trans": cand_row["subject_trans"] or candidate.get("subject_trans", "")
+                                })
+                except Exception as e:
+                    print(f"Lỗi khi lấy other_images từ products_1688_filtered: {e}")
+            
+            json_return = {
+                "id": row["id"],
+                "image_url": row["image_url"],
+                "candidate_img": candidate_img,
+                "subject_trans": subject_trans,
+                "candidate_price": candidate_price,
+                "user": best_match.get("user"),
+                "elapsed_time": best_match.get("elapsed_time"),
+                "timestamp": best_match.get("timestamp"),
+                "verify_result": verify_result,
+                "abt_label": abt_label,
+                "other_images": [{"id": img["id"], "image_url": img["image_url"]} for img in other_images]
+            }
+            return JSONResponse(json_return)
+        except Exception as e:
+            return JSONResponse({"error": f"Lỗi xử lý dữ liệu: {e}"}, status_code=500)
+
+@app.post("/api/admin_verify_product")
+async def api_admin_verify_product(data: dict = Body(...)):
+    product_id = data.get("id")
+    result = data.get("result")
+    
+    if not product_id or result not in ["pass", "fail"]:
+        return JSONResponse({"success": False, "msg": "Thiếu thông tin hoặc kết quả không hợp lệ"})
+    
+    pool = await get_pg_pool(DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME)
+    async with pool.acquire() as conn:
+        # Kiểm tra sản phẩm tồn tại
+        exists = await conn.fetchval(
+            'SELECT 1 FROM abt_image_to_products_1688 WHERE id = $1 AND best_match IS NOT NULL',
+            product_id
+        )
+        
+        if not exists:
+            return JSONResponse({"success": False, "msg": "Sản phẩm không tồn tại hoặc chưa được filter"})
+        
+        # Cập nhật verify_result
+        verify_data = {
+            "result": result,
+            "timestamp": datetime.now().isoformat()
+        }
+        
+        await conn.execute(
+            'UPDATE abt_image_to_products_1688 SET verify_result = $1 WHERE id = $2',
+            json.dumps(verify_data, ensure_ascii=False),
+            product_id
+        )
+        
+        return JSONResponse({"success": True, "msg": "Đã cập nhật kết quả verify"})
 
 @app.get("/filter_history", response_class=HTMLResponse)
 async def filter_history_page(request: Request):
