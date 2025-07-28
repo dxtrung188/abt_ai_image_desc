@@ -24,6 +24,17 @@
         .batch-form button:disabled { background: #b0c4de; cursor: not-allowed; }
         .batch-form button.stop-btn { background: #d9534f; margin-left: 16px; }
         .batch-form button.stop-btn:disabled { background: #f5b7b1; }
+        
+        /* CSS cho bảng lịch sử */
+        .history-table { font-size: 13px; }
+        .history-table th, .history-table td { padding: 8px 6px; text-align: left; }
+        .history-table th { background: #f8f9fa; font-weight: 600; color: #495057; }
+        .history-table td { border-bottom: 1px solid #e9ecef; }
+        .history-table tr:hover { background: #f8f9fa; }
+        .confidence-score { font-weight: 600; }
+        .confidence-high { color: #28a745; }
+        .confidence-medium { color: #ffc107; }
+        .confidence-low { color: #dc3545; }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -55,6 +66,33 @@
     <div class="result-box">
         <h3>Kết quả xử lý:</h3>
         <div class="log-list" id="log-list"></div>
+    </div>
+    
+    <!-- Bảng lịch sử phân tích -->
+    <div class="dashboard" style="margin-top: 30px;">
+        <div class="dashboard-title">Lịch sử phân tích AI</div>
+        <div style="overflow-x: auto;">
+            <table class="dashboard-table history-table" id="history-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Ảnh</th>
+                        <th>Loại sản phẩm</th>
+                        <th>Chất liệu</th>
+                        <th>Vị trí</th>
+                        <th>Màu sắc</th>
+                        <th>Phong cách thiết kế</th>
+                        <th>Kiểu dáng</th>
+                        <th>Chức năng phụ</th>
+                        <th>Đặc điểm nhận dạng</th>
+                        <th>Điểm tin cậy</th>
+                        <th>Thời gian</th>
+                    </tr>
+                </thead>
+                <tbody id="history-tbody">
+                </tbody>
+            </table>
+        </div>
     </div>
     <script>
         // Dashboard fetch and render
@@ -94,6 +132,66 @@
             });
         }
         loadDashboard();
+        
+        // Load lịch sử phân tích
+        async function loadAnalyzeHistory() {
+            try {
+                let resp = await fetch('/api/analyze_history?limit=100');
+                let data = await resp.json();
+                
+                let tbody = document.getElementById('history-tbody');
+                tbody.innerHTML = '';
+                
+                data.forEach(item => {
+                    let row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${item.id}</td>
+                        <td>
+                            <img src="${item.image_url}" alt="Ảnh ${item.id}" 
+                                 style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px; cursor: pointer;"
+                                 onclick="showImageModal('${item.image_url}')">
+                        </td>
+                        <td>${item.loai_san_pham || '-'}</td>
+                        <td>${item.chat_lieu || '-'}</td>
+                        <td>${item.vi_tri || '-'}</td>
+                        <td>${item.mau_sac || '-'}</td>
+                        <td>${item.phong_cach_thiet_ke || '-'}</td>
+                        <td>${item.kieu_dang || '-'}</td>
+                        <td>${item.chuc_nang_phu || '-'}</td>
+                        <td>${item.dac_diem_nhan_dang || '-'}</td>
+                        <td>
+                            ${item.chi_so_tin_cay !== null ? 
+                                `<span class="confidence-score ${item.chi_so_tin_cay >= 0.7 ? 'confidence-high' : item.chi_so_tin_cay >= 0.4 ? 'confidence-medium' : 'confidence-low'}">${item.chi_so_tin_cay.toFixed(3)}</span>` : 
+                                '-'
+                            }
+                        </td>
+                        <td>${item.updated_at ? new Date(item.updated_at).toLocaleString('vi-VN') : '-'}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Lỗi khi load lịch sử phân tích:', error);
+            }
+        }
+        
+        // Modal hiển thị ảnh
+        function showImageModal(imageUrl) {
+            let modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+                background: rgba(0,0,0,0.8); z-index: 1000; display: flex; 
+                align-items: center; justify-content: center; cursor: pointer;
+            `;
+            modal.innerHTML = `
+                <img src="${imageUrl}" style="max-width: 90%; max-height: 90%; object-fit: contain;">
+            `;
+            modal.onclick = () => document.body.removeChild(modal);
+            document.body.appendChild(modal);
+        }
+        
+        // Load lịch sử khi trang load
+        loadAnalyzeHistory();
+        
         let stopFlag = false;
         function formatLabel(label) {
             if (!label || label === 'null') return '<i>Không có</i>';
@@ -150,8 +248,9 @@
             }
             document.getElementById('start-btn').disabled = false;
             document.getElementById('stop-btn').disabled = true;
-            // Refresh dashboard sau khi batch xong
+            // Refresh dashboard và lịch sử sau khi batch xong
             loadDashboard();
+            loadAnalyzeHistory();
         }
         function stopBatch() {
             stopFlag = true;

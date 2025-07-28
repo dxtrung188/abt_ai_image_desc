@@ -184,7 +184,7 @@ async def analyze_image_batch(request: Request, batch_size: int = Form(...)):
         if not os.path.exists(local_path):
             ok = await download_image_from_url(image_url, local_path)
             if not ok:
-                log_message(f"Lỗi tải ảnh cho id={row_id}", logs)
+                log_message(f"Lỗi tải ảnh {image_url} cho id={row_id}", logs)
                 continue
         try:
             abt_label, abt_label_cost = await analyze_image_openai_json(local_path, PROMPT, openai)
@@ -470,3 +470,68 @@ async def api_filter_item(id: int):
             "candidates": convert_decimal(candidates_full),
             "abt_label_fields": abt_label_fields
         }) 
+
+@app.get("/api/analyze_history")
+async def api_analyze_history(limit: int = 50):
+    pool = await get_pg_pool(DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME)
+    async with pool.acquire() as conn:
+        rows = await conn.fetch('''
+            SELECT id, image_url, abt_label, abt_label_cost, updated_at
+            FROM abt_image_to_products_1688
+            WHERE abt_label IS NOT NULL
+            ORDER BY updated_at DESC
+            LIMIT $1
+        ''', limit)
+        
+        result = []
+        for row in rows:
+            item = {
+                "id": row["id"],
+                "image_url": row["image_url"],
+                "updated_at": str(row["updated_at"]) if row["updated_at"] else None,
+                "abt_label_cost": row["abt_label_cost"]
+            }
+            
+            # Parse abt_label để lấy các thuộc tính
+            if row["abt_label"]:
+                try:
+                    label_data = json.loads(row["abt_label"])
+                    item.update({
+                        "loai_san_pham": label_data.get("loai_san_pham"),
+                        "chat_lieu": label_data.get("chat_lieu"),
+                        "vi_tri": label_data.get("vi_tri"),
+                        "mau_sac": label_data.get("mau_sac"),
+                        "phong_cach_thiet_ke": label_data.get("phong_cach_thiet_ke"),
+                        "kieu_dang": label_data.get("kieu_dang"),
+                        "chuc_nang_phu": label_data.get("chuc_nang_phu"),
+                        "dac_diem_nhan_dang": label_data.get("dac_diem_nhan_dang"),
+                        "chi_so_tin_cay": label_data.get("chi_so_tin_cay")
+                    })
+                except Exception:
+                    item.update({
+                        "loai_san_pham": None,
+                        "chat_lieu": None,
+                        "vi_tri": None,
+                        "mau_sac": None,
+                        "phong_cach_thiet_ke": None,
+                        "kieu_dang": None,
+                        "chuc_nang_phu": None,
+                        "dac_diem_nhan_dang": None,
+                        "chi_so_tin_cay": None
+                    })
+            else:
+                item.update({
+                    "loai_san_pham": None,
+                    "chat_lieu": None,
+                    "vi_tri": None,
+                    "mau_sac": None,
+                    "phong_cach_thiet_ke": None,
+                    "kieu_dang": None,
+                    "chuc_nang_phu": None,
+                    "dac_diem_nhan_dang": None,
+                    "chi_so_tin_cay": None
+                })
+            
+            result.append(item)
+        
+        return JSONResponse(result) 
