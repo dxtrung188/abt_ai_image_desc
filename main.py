@@ -13,7 +13,7 @@ from glob import glob
 import aiohttp
 from utils import (
     log_message, download_image_from_url, encode_image_base64, clean_json_response, extract_estimate_from_response, analyze_image_openai_json,
-    get_pg_pool, get_next_image_to_label, get_candidates_info, get_batch_images_for_label
+    get_candidates_info, get_next_image_to_label, get_batch_images_for_label
 )
 import decimal
 
@@ -47,6 +47,38 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 if not all([DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD, OPENAI_API_KEY]):
     raise RuntimeError("Missing one or more required environment variables: POSTGRES_HOST, POSTGRES_PORT, POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD, OPENAI_API_KEY")
 openai.api_key = OPENAI_API_KEY
+
+# Global connection pool
+_pool = None
+
+async def get_pool():
+    global _pool
+    if _pool is None:
+        _pool = await asyncpg.create_pool(
+            host=DB_HOST,
+            port=DB_PORT,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            database=DB_NAME,
+            min_size=5,  # Tăng min_size cho production
+            max_size=20,  # Tăng max_size cho 10-20 CCU
+            command_timeout=60,
+            server_settings={
+                'application_name': 'abt_ai_image_desc'
+            }
+        )
+    return _pool
+
+@app.on_event("startup")
+async def startup_event():
+    # Khởi tạo connection pool khi app startup
+    await get_pool()
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    global _pool
+    if _pool:
+        await _pool.close()
 
 PROMPT = '''Bạn là một chuyên gia nội thất và thị giác máy tính.
 Nhiệm vụ của bạn là quan sát hình ảnh nội thất đầu vào, và gán nhãn sản phẩm theo 7 nhóm thuộc tính chi tiết cùng với chỉ số tin cậy (confidence score) từ 0 đến 1.
@@ -88,7 +120,7 @@ IMAGES_DIR = "images"
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request, edit_id: int = None):
-    pool = await get_pg_pool(DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME)
+    pool = await get_pool()
     if edit_id:
         async with pool.acquire() as conn:
             row = await conn.fetchrow('SELECT * FROM abt_image_to_products_1688 WHERE id = $1', edit_id)
@@ -144,7 +176,7 @@ async def read_root(request: Request, edit_id: int = None):
 
 @app.post("/submit")
 async def submit_best_match(request: Request, row_id: int = Form(...), selected_offer_id: str = Form(...), user: str = Form(...), elapsed_time: int = Form(...)):
-    pool = await get_pg_pool(DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME)
+    pool = await get_pool()
     offer_id = selected_offer_id if selected_offer_id else None
     best_match = {
         "offer_id": offer_id,
@@ -167,7 +199,7 @@ async def analyze_image_form(request: Request):
 
 @app.post("/analyze_image", response_class=HTMLResponse)
 async def analyze_image_batch(request: Request, batch_size: int = Form(...)):
-    pool = await get_pg_pool(DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME)
+    pool = await get_pool()
     rows = await get_batch_images_for_label(pool, batch_size)
     logs = []
     for row in rows:
@@ -202,7 +234,7 @@ async def analyze_image_batch(request: Request, batch_size: int = Form(...)):
 
 @app.get("/api/get_batch_images")
 async def api_get_batch_images(batch_size: int = 5):
-    pool = await get_pg_pool(DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME)
+    pool = await get_pool()
     rows = await get_batch_images_for_label(pool, batch_size)
     # Trả về id, image_url cho client
     return JSONResponse([{"id": row["id"], "image_url": row["image_url"]} for row in rows])
@@ -213,7 +245,7 @@ async def api_analyze_image_one(data: dict = Body(...)):
     image_url = data.get("image_url")
     if not row_id or not image_url:
         return JSONResponse({"success": False, "msg": "Thiếu id hoặc image_url"})
-    pool = await get_pg_pool(DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME)
+    pool = await get_pool()
     from urllib.parse import urlparse
     parsed_url = urlparse(image_url)
     path = parsed_url.path
@@ -244,7 +276,7 @@ async def api_analyze_image_one(data: dict = Body(...)):
 
 @app.get("/api/analyze_stats")
 async def api_analyze_stats():
-    pool = await get_pg_pool(DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME)
+    pool = await get_pool()
     async with pool.acquire() as conn:
         # Lấy tổng số item
         total = await conn.fetchval("SELECT COUNT(*) FROM abt_image_to_products_1688")
@@ -306,7 +338,7 @@ async def api_analyze_stats():
 
 @app.get("/api/filter_history")
 async def api_filter_history(user: str = None):
-    pool = await get_pg_pool(DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME)
+    pool = await get_pool()
     async with pool.acquire() as conn:
         import json as pyjson
         if user:
@@ -371,7 +403,7 @@ async def admin_page(request: Request):
 
 @app.get("/api/admin_stats")
 async def api_admin_stats():
-    pool = await get_pg_pool(DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME)
+    pool = await get_pool()
     async with pool.acquire() as conn:
         # Tổng số sản phẩm đã filter
         total = await conn.fetchval("SELECT COUNT(*) FROM abt_image_to_products_1688 WHERE best_match IS NOT NULL")
@@ -405,7 +437,7 @@ async def api_admin_stats():
 
 @app.get("/api/admin_users")
 async def api_admin_users():
-    pool = await get_pg_pool(DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME)
+    pool = await get_pool()
     async with pool.acquire() as conn:
         rows = await conn.fetch("""
             SELECT DISTINCT best_match->>'user' as user 
@@ -422,7 +454,7 @@ async def api_admin_filtered_products(
     date_from: str = None,
     date_to: str = None
 ):
-    pool = await get_pg_pool(DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME)
+    pool = await get_pool()
     async with pool.acquire() as conn:
         # Xây dựng query với điều kiện lọc
         where_conditions = ["best_match IS NOT NULL"]
@@ -515,7 +547,7 @@ async def api_admin_filtered_products(
 
 @app.get("/api/admin_product_detail")
 async def api_admin_product_detail(id: int):
-    pool = await get_pg_pool(DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME)
+    pool = await get_pool()
     async with pool.acquire() as conn:
         row = await conn.fetchrow('''
             SELECT id, image_url, best_match, verify_result, products_1688_filtered, abt_label
@@ -623,7 +655,7 @@ async def api_admin_verify_product(data: dict = Body(...)):
     if not product_id or result not in ["pass", "fail"]:
         return JSONResponse({"success": False, "msg": "Thiếu thông tin hoặc kết quả không hợp lệ"})
     
-    pool = await get_pg_pool(DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME)
+    pool = await get_pool()
     async with pool.acquire() as conn:
         # Kiểm tra sản phẩm tồn tại
         exists = await conn.fetchval(
@@ -654,7 +686,7 @@ async def filter_history_page(request: Request):
 
 @app.get("/api/filter_history_stats")
 async def api_filter_history_stats():
-    pool = await get_pg_pool(DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME)
+    pool = await get_pool()
     async with pool.acquire() as conn:
         rows = await conn.fetch('''
             SELECT best_match FROM abt_image_to_products_1688 WHERE best_match IS NOT NULL
@@ -711,7 +743,7 @@ async def api_filter_history_stats():
 
 @app.get("/api/filter_item")
 async def api_filter_item(id: int):
-    pool = await get_pg_pool(DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME)
+    pool = await get_pool()
     async with pool.acquire() as conn:
         row = await conn.fetchrow('SELECT * FROM abt_image_to_products_1688 WHERE id = $1', id)
         if not row:
@@ -756,7 +788,7 @@ async def api_filter_item(id: int):
 
 @app.get("/api/analyze_history")
 async def api_analyze_history(limit: int = 50):
-    pool = await get_pg_pool(DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME)
+    pool = await get_pool()
     async with pool.acquire() as conn:
         rows = await conn.fetch('''
             SELECT id, image_url, abt_label, abt_label_cost, updated_at

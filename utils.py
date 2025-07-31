@@ -88,17 +88,6 @@ async def analyze_image_openai_json(image_path, PROMPT, openai):
     abt_label_cost = json.dumps(estimate, ensure_ascii=False)
     return abt_label, abt_label_cost 
 
-async def get_pg_pool(DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME):
-    return await asyncpg.create_pool(
-        host=DB_HOST,
-        port=DB_PORT,
-        user=DB_USER,
-        password=DB_PASSWORD,
-        database=DB_NAME,
-        min_size=1,
-        max_size=2
-    )
-
 async def get_next_image_to_label(pool):
     async with pool.acquire() as conn:
         row = await conn.fetchrow('''

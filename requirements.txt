@@ -1,7 +1,9 @@
 fastapi
-uvicorn
+uvicorn[standard]
+gunicorn
 jinja2
 asyncpg
 python-dotenv 
 aiohttp 
-openai 
+openai
+psutil 
