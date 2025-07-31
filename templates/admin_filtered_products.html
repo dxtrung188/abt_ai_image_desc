@@ -237,7 +237,7 @@
                 }
                 
                 html += `
-                    <div class="product-card">
+                    <div class="product-card" data-product-id="${product.id}">
                         <div class="product-images">
                             <img src="${product.image_url}" alt="Ảnh gốc" onclick="showImageModal('${product.image_url}')">
                             ${product.candidate_img ? `<img src="${product.candidate_img}" alt="Ảnh candidate" onclick="showImageModal('${product.candidate_img}')">` : ''}
@@ -248,6 +248,7 @@
                             <div class="product-details">
                                 User: ${product.user || 'N/A'}<br>
                                 Thời gian: ${product.elapsed_time || 0}s<br>
+                                Thang điểm: ${getAccuracyScoreText(product.accuracy_score)}<br>
                                 Ngày: ${product.timestamp ? new Date(product.timestamp).toLocaleDateString('vi-VN') : 'N/A'}
                             </div>
                             <div class="verification-status ${statusClass}">${statusText}</div>
@@ -268,9 +269,13 @@
         
 
         
-        // Verify sản phẩm
+        // Verify sản phẩm với AJAX
         async function verifyProduct(id, result) {
             try {
+                // Disable buttons during verification
+                const buttons = document.querySelectorAll(`[onclick*="verifyProduct(${id}"]`);
+                buttons.forEach(btn => btn.disabled = true);
+                
                 let resp = await fetch('/api/admin_verify_product', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -279,15 +284,44 @@
                 
                 let data = await resp.json();
                 if (data.success) {
-                    loadProducts();
+                    // Update the specific product card without reloading all
+                    updateProductCard(id, result);
+                    // Update stats
                     loadStats();
                 } else {
                     alert('Lỗi: ' + data.msg);
+                    // Re-enable buttons on error
+                    buttons.forEach(btn => btn.disabled = false);
                 }
             } catch (error) {
                 console.error('Lỗi verify:', error);
                 alert('Lỗi khi verify sản phẩm');
+                // Re-enable buttons on error
+                const buttons = document.querySelectorAll(`[onclick*="verifyProduct(${id}"]`);
+                buttons.forEach(btn => btn.disabled = false);
             }
+        }
+        
+        // Update specific product card after verification
+        function updateProductCard(id, result) {
+            const productCard = document.querySelector(`[data-product-id="${id}"]`);
+            if (!productCard) return;
+            
+            // Update verification status
+            const statusDiv = productCard.querySelector('.verification-status');
+            const actionsDiv = productCard.querySelector('.product-actions');
+            
+            if (result === 'pass') {
+                statusDiv.className = 'verification-status status-pass';
+                statusDiv.textContent = 'Đạt';
+            } else {
+                statusDiv.className = 'verification-status status-fail';
+                statusDiv.textContent = 'Không đạt';
+            }
+            
+            // Remove verify buttons
+            const verifyButtons = actionsDiv.querySelectorAll('.btn-pass, .btn-fail');
+            verifyButtons.forEach(btn => btn.remove());
         }
         
         // Xem chi tiết
@@ -415,6 +449,10 @@
                             <span class="detail-value">${product.elapsed_time || 0}s</span>
                         </div>
                         <div class="detail-row">
+                            <span class="detail-label">Thang điểm:</span>
+                            <span class="detail-value">${getAccuracyScoreText(product.accuracy_score)}</span>
+                        </div>
+                        <div class="detail-row">
                             <span class="detail-label">Ngày tạo:</span>
                             <span class="detail-value">${product.timestamp ? new Date(product.timestamp).toLocaleString('vi-VN') : 'N/A'}</span>
                         </div>
@@ -467,6 +505,20 @@
             if (event.target === modal) {
                 closeModal();
             }
+        }
+        
+        // Helper function để hiển thị text thang điểm
+        function getAccuracyScoreText(score) {
+            if (!score) return 'N/A';
+            const scoreMap = {
+                1: '1 - Chính xác sản phẩm',
+                2: '2 - Cùng sản phẩm nhưng khác chi tiết nhỏ',
+                3: '3 - Gần giống',
+                4: '4 - Cùng loại sản phẩm, nhưng khác màu sắc, chất liệu',
+                5: '5 - Cùng loại sản phẩm, nhưng khác biệt',
+                6: '6 - Không có sản phẩm trùng'
+            };
+            return scoreMap[score] || `Điểm ${score}`;
         }
         
         // Load dữ liệu ban đầu
