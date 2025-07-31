@@ -95,7 +95,7 @@ async def get_next_image_to_label(pool):
             WHERE best_match is NULL 
             AND abt_label IS NOT NULL 
             AND products_1688_filtered IS NOT NULL
-            AND products_1688_filtered != ''
+           
             ORDER BY id ASC
             LIMIT 1
         ''')
