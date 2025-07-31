@@ -92,7 +92,10 @@ async def get_next_image_to_label(pool):
     async with pool.acquire() as conn:
         row = await conn.fetchrow('''
             SELECT * FROM abt_image_to_products_1688
-            WHERE best_match is NULL and (abt_label IS NOT NULL)
+            WHERE best_match is NULL 
+            AND abt_label IS NOT NULL 
+            AND products_1688_filtered IS NOT NULL
+            AND products_1688_filtered != ''
             ORDER BY id ASC
             LIMIT 1
         ''')

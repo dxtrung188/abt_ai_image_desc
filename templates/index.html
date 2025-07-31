@@ -193,20 +193,7 @@
                 <input type="text" name="user" id="user" required oninput="saveUserToStorage(); checkUserInput()" autocomplete="username">
             </div>
         </div>
-        <div class="submit-row" style="justify-content:center; align-items:center; width:100%; max-width:600px; margin:0 auto 18px auto;">
-            <div class="user-input-block">
-                <label for="accuracy_score" style="font-size:18px; font-weight:600; color:#007bff;">Thang điểm chính xác:</label><br>
-                <select name="accuracy_score" id="accuracy_score" required onchange="checkUserInput()" style="padding: 16px 18px; font-size: 20px; border-radius: 8px; border: 1.5px solid #007bff; width: 100%; max-width: 350px; box-sizing: border-box; margin-top: 8px; margin-bottom: 4px; outline: none; transition: border 0.2s;">
-                    <option value="">-- Chọn thang điểm --</option>
-                    <option value="1">1 - Chính xác sản phẩm</option>
-                    <option value="2">2 - Cùng sản phẩm nhưng khác chi tiết nhỏ</option>
-                    <option value="3">3 - Gần giống</option>
-                    <option value="4">4 - Cùng loại sản phẩm, nhưng khác màu sắc, chất liệu</option>
-                    <option value="5">5 - Cùng loại sản phẩm, nhưng khác biệt</option>
-                    <option value="6">6 - Không có sản phẩm trùng</option>
-                </select>
-            </div>
-        </div>
+
         <div style="text-align:center; margin-bottom:10px; font-size:16px; color:#555;">
             Thời gian thao tác: <span id="elapsed-time">0</span> giây
         </div>
@@ -262,7 +249,19 @@
                 <div style="margin-top:12px; text-align:right;">
                     <button type="button" onclick="resetCandidateSelection()" style="background:none; border:none; color:#007bff; font-size:15px; cursor:pointer;">Bỏ chọn ảnh</button>
                 </div>
-                <div class="submit-row" style="justify-content:center; align-items:center; width:100%; max-width:600px; margin:24px auto 0 auto;">
+                <div class="submit-row" style="justify-content:center; align-items:center; width:100%; max-width:800px; margin:24px auto 0 auto; gap: 16px;">
+                    <div style="display: flex; flex-direction: column; align-items: center; min-width: 200px;">
+                        <label for="accuracy_score" style="font-size:14px; font-weight:600; color:#007bff; margin-bottom:4px;">Thang điểm chính xác:</label>
+                        <select name="accuracy_score" id="accuracy_score" required onchange="checkUserInput()" style="padding: 8px 12px; font-size: 14px; border-radius: 6px; border: 1.5px solid #007bff; width: 180px; box-sizing: border-box; outline: none; transition: border 0.2s;">
+                            <option value="">-- Chọn thang điểm --</option>
+                            <option value="1">1 - Chính xác sản phẩm</option>
+                            <option value="2">2 - Cùng sản phẩm nhưng khác chi tiết nhỏ</option>
+                            <option value="3">3 - Gần giống</option>
+                            <option value="4">4 - Cùng loại sản phẩm, nhưng khác màu sắc, chất liệu</option>
+                            <option value="5">5 - Cùng loại sản phẩm, nhưng khác biệt</option>
+                            <option value="6">6 - Không có sản phẩm trùng</option>
+                        </select>
+                    </div>
                     <button type="submit" class="submit-btn" id="submit-btn" disabled>Submit</button>
                     <button type="button" class="submit-btn" id="skip-btn" style="background:#6c757d;" onclick="skipCandidate()" disabled>Bỏ qua</button>
                 </div>
