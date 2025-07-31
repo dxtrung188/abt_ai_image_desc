@@ -175,7 +175,7 @@ async def read_root(request: Request, edit_id: int = None):
     )
 
 @app.post("/submit")
-async def submit_best_match(request: Request, row_id: int = Form(...), selected_offer_id: str = Form(...), user: str = Form(...), elapsed_time: int = Form(...)):
+async def submit_best_match(request: Request, row_id: int = Form(...), selected_offer_id: str = Form(...), user: str = Form(...), elapsed_time: int = Form(...), accuracy_score: int = Form(...)):
     pool = await get_pool()
     offer_id = selected_offer_id if selected_offer_id else None
     best_match = {
@@ -183,7 +183,8 @@ async def submit_best_match(request: Request, row_id: int = Form(...), selected_
         "timestamp": datetime.now().isoformat(),
         "review_status": 0,
         "user": user,
-        "elapsed_time": elapsed_time
+        "elapsed_time": elapsed_time,
+        "accuracy_score": accuracy_score
     }
     async with pool.acquire() as conn:
         await conn.execute(
@@ -393,7 +394,9 @@ async def api_filter_history(user: str = None):
                 "subject_trans": subject_trans,
                 "user": user_val,
                 "elapsed_time": elapsed_time,
-                "timestamp": timestamp
+                "timestamp": timestamp,
+                "accuracy_score": best_match.get("accuracy_score"),
+                "offer_id": offer_id
             })
         return JSONResponse(result) 
 
@@ -534,6 +537,7 @@ async def api_admin_filtered_products(
                     "user": best_match.get("user"),
                     "elapsed_time": best_match.get("elapsed_time"),
                     "timestamp": best_match.get("timestamp"),
+                    "accuracy_score": best_match.get("accuracy_score"),
                     "verify_result": verify_result
                 })
             except Exception as e:
@@ -639,6 +643,7 @@ async def api_admin_product_detail(id: int):
                 "user": best_match.get("user"),
                 "elapsed_time": best_match.get("elapsed_time"),
                 "timestamp": best_match.get("timestamp"),
+                "accuracy_score": best_match.get("accuracy_score"),
                 "verify_result": verify_result,
                 "abt_label": abt_label,
                 "other_images": [{"id": img["id"], "image_url": img["image_url"]} for img in other_images]
@@ -779,11 +784,20 @@ async def api_filter_item(id: int):
         candidates_info = await get_candidates_info_with_price(pool, offer_ids)
         info_map = {c["offer_id"]: c for c in candidates_info}
         candidates_full = [info_map.get(oid) for oid in offer_ids if oid in info_map]
+        # Parse best_match để lấy accuracy_score
+        best_match = None
+        if row.get("best_match"):
+            try:
+                best_match = json.loads(row["best_match"])
+            except Exception:
+                pass
+        
         return JSONResponse({
             "id": row.get("id"),
             "image_url": row.get("image_url"),
             "candidates": convert_decimal(candidates_full),
-            "abt_label_fields": abt_label_fields
+            "abt_label_fields": abt_label_fields,
+            "accuracy_score": best_match.get("accuracy_score") if best_match else None
         }) 
 
 @app.get("/api/analyze_history")

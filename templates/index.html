@@ -130,9 +130,10 @@
         }
         function checkUserInput() {
             var user = document.getElementById('user').value.trim();
+            var accuracyScore = document.getElementById('accuracy_score').value;
             var submitBtn = document.getElementById('submit-btn');
             var skipBtn = document.getElementById('skip-btn');
-            if (user && isValidUsername(user)) {
+            if (user && isValidUsername(user) && accuracyScore) {
                 submitBtn.disabled = false;
                 skipBtn.disabled = false;
             } else {
@@ -163,9 +164,15 @@
         }
         function beforeSubmit() {
             let user = document.getElementById('user').value.trim();
+            let accuracyScore = document.getElementById('accuracy_score').value;
             if (!isValidUsername(user)) {
                 alert('Username chỉ được phép chứa chữ cái, số, dấu gạch dưới, không dấu, không khoảng trắng!');
                 document.getElementById('user').focus();
+                return false;
+            }
+            if (!accuracyScore) {
+                alert('Vui lòng chọn thang điểm chính xác!');
+                document.getElementById('accuracy_score').focus();
                 return false;
             }
             let elapsed = Math.floor((Date.now() - startTime) / 1000);
@@ -184,6 +191,20 @@
             <div class="user-input-block">
                 <label for="user" style="font-size:18px; font-weight:600; color:#007bff;">Người chọn (username/điện thoại):</label><br>
                 <input type="text" name="user" id="user" required oninput="saveUserToStorage(); checkUserInput()" autocomplete="username">
+            </div>
+        </div>
+        <div class="submit-row" style="justify-content:center; align-items:center; width:100%; max-width:600px; margin:0 auto 18px auto;">
+            <div class="user-input-block">
+                <label for="accuracy_score" style="font-size:18px; font-weight:600; color:#007bff;">Thang điểm chính xác:</label><br>
+                <select name="accuracy_score" id="accuracy_score" required onchange="checkUserInput()" style="padding: 16px 18px; font-size: 20px; border-radius: 8px; border: 1.5px solid #007bff; width: 100%; max-width: 350px; box-sizing: border-box; margin-top: 8px; margin-bottom: 4px; outline: none; transition: border 0.2s;">
+                    <option value="">-- Chọn thang điểm --</option>
+                    <option value="1">1 - Chính xác sản phẩm</option>
+                    <option value="2">2 - Cùng sản phẩm nhưng khác chi tiết nhỏ</option>
+                    <option value="3">3 - Gần giống</option>
+                    <option value="4">4 - Cùng loại sản phẩm, nhưng khác màu sắc, chất liệu</option>
+                    <option value="5">5 - Cùng loại sản phẩm, nhưng khác biệt</option>
+                    <option value="6">6 - Không có sản phẩm trùng</option>
+                </select>
             </div>
         </div>
         <div style="text-align:center; margin-bottom:10px; font-size:16px; color:#555;">
@@ -253,7 +274,7 @@
         <div style="font-size:18px; font-weight:600; color:#007bff; margin-bottom:10px;">Lịch sử lọc của bạn</div>
         <div class="dashboard-table-wrapper">
             <table class="dashboard-table" id="user-history-table">
-                <thead><tr><th>ID</th><th>Ảnh gốc</th><th>Ảnh chọn</th><th>Tên sản phẩm</th><th>Thời gian thao tác (giây)</th><th>Thời điểm</th><th></th></tr></thead>
+                <thead><tr><th>ID</th><th>Ảnh gốc</th><th>Ảnh chọn</th><th>Tên sản phẩm</th><th>Thang điểm</th><th>Thời gian thao tác (giây)</th><th>Thời điểm</th><th></th></tr></thead>
                 <tbody></tbody>
             </table>
         </div>
@@ -270,11 +291,24 @@
             let tbody = document.querySelector('#user-history-table tbody');
             tbody.innerHTML = '';
             data.forEach(item => {
+                let accuracyScoreText = '';
+                if (item.accuracy_score) {
+                    const scoreMap = {
+                        1: '1 - Chính xác sản phẩm',
+                        2: '2 - Cùng sản phẩm nhưng khác chi tiết nhỏ',
+                        3: '3 - Gần giống',
+                        4: '4 - Cùng loại sản phẩm, nhưng khác màu sắc, chất liệu',
+                        5: '5 - Cùng loại sản phẩm, nhưng khác biệt',
+                        6: '6 - Không có sản phẩm trùng'
+                    };
+                    accuracyScoreText = scoreMap[item.accuracy_score] || `Điểm ${item.accuracy_score}`;
+                }
                 tbody.innerHTML += `<tr>
                     <td>${item.id}</td>
                     <td>${item.image_url ? `<img src='${item.image_url}' loading='lazy'>` : ''}</td>
-                    <td>${item.offer_id === null ? `<span class='no-match'>Không có SP trùng</span>` : (item.candidate_img ? `<img src='${item.candidate_img}' loading='lazy'>` : '')}</td>
-                    <td>${item.offer_id === null ? `<span class='no-match'>Không có SP trùng</span>` : (item.subject_trans || '')}</td>
+                    <td>${!item.offer_id ? `<span class='no-match'>Không có SP trùng</span>` : (item.candidate_img ? `<img src='${item.candidate_img}' loading='lazy'>` : '')}</td>
+                    <td>${!item.offer_id ? `<span class='no-match'>Không có SP trùng</span>` : (item.subject_trans || '')}</td>
+                    <td>${accuracyScoreText}</td>
                     <td>${item.elapsed_time !== null && item.elapsed_time !== undefined ? item.elapsed_time : ''}</td>
                     <td>${item.timestamp ? item.timestamp.replace('T','<br>') : ''}</td>
                     <td><button type='button' onclick='chooseAgain(${item.id})' style='padding:4px 12px; border-radius:6px; background:#007bff; color:#fff; border:none; cursor:pointer;'>Chọn lại</button></td>
@@ -302,6 +336,10 @@
             });
             // Reset preview, selection
             resetCandidateSelection();
+            // Set accuracy_score nếu có
+            if (item.accuracy_score) {
+                document.getElementById('accuracy_score').value = item.accuracy_score;
+            }
             // Hiển thị trạng thái đang chỉnh sửa
             currentEditId = id;
             document.getElementById('edit-banner').style.display = '';
@@ -312,9 +350,15 @@
         }
         function skipCandidate() {
             var user = document.getElementById('user').value.trim();
+            var accuracyScore = document.getElementById('accuracy_score').value;
             if (!isValidUsername(user)) {
                 alert('Username chỉ được phép chứa chữ cái, số, dấu gạch dưới, không dấu, không khoảng trắng!');
                 document.getElementById('user').focus();
+                return;
+            }
+            if (!accuracyScore) {
+                alert('Vui lòng chọn thang điểm chính xác!');
+                document.getElementById('accuracy_score').focus();
                 return;
             }
             document.getElementById('selected_offer_id').value = '';
