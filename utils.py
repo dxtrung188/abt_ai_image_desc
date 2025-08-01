@@ -95,8 +95,7 @@ async def get_next_image_to_label(pool):
             WHERE best_match is NULL 
             AND abt_label IS NOT NULL 
             AND products_1688_filtered IS NOT NULL
-           
-            ORDER BY id ASC
+            ORDER BY random()
             LIMIT 1
         ''')
         return dict(row) if row else None
