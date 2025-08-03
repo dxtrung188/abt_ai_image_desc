@@ -122,7 +122,7 @@ IMAGES_DIR = "images"
 async def read_root(request: Request, edit_id: int = None):
     pool = await get_pool()
     if edit_id:
-        async with pool.acquire() as conn:
+        async with pool.acquire() as conn:  
             row = await conn.fetchrow('SELECT * FROM abt_image_to_products_1688 WHERE id = $1', edit_id)
             if row:
                 row = dict(row)
@@ -147,7 +147,7 @@ async def read_root(request: Request, edit_id: int = None):
         try:
             data = json.loads(candidates_json)
             candidates = data.get("candidates", [])
-            offer_ids = [c.get("offer_id") for c in candidates if c.get("offer_id")]
+            offer_ids = [str(c.get("offer_id")) for c in candidates if c.get("offer_id")]
         except Exception:
             pass
     # Lấy thêm trường price và subject_trans
@@ -384,7 +384,7 @@ async def api_filter_history(user: str = None):
                     pass
             candidate_img = None
             if offer_id:
-                cand_row = await conn.fetchrow('SELECT image_url FROM abt_products_1688 WHERE offer_id = $1', offer_id)
+                cand_row = await conn.fetchrow('SELECT image_url FROM abt_products_1688 WHERE offer_id = $1', str(offer_id))
                 if cand_row:
                     candidate_img = cand_row["image_url"]
             result.append({
@@ -524,7 +524,7 @@ async def api_admin_filtered_products(
                 if best_match.get("offer_id"):
                     cand_row = await conn.fetchrow(
                         'SELECT image_url FROM abt_products_1688 WHERE offer_id = $1', 
-                        best_match["offer_id"]
+                        str(best_match["offer_id"])
                     )
                     if cand_row:
                         candidate_img = cand_row["image_url"]
@@ -600,7 +600,7 @@ async def api_admin_product_detail(id: int):
                 try:
                     cand_row = await conn.fetchrow(
                         'SELECT image_url, subject_trans, price FROM abt_products_1688 WHERE offer_id = $1', 
-                        best_match["offer_id"]
+                        str(best_match["offer_id"])
                     )
                     if cand_row:
                         candidate_img = cand_row["image_url"]
@@ -623,7 +623,7 @@ async def api_admin_product_detail(id: int):
                             # Lấy ảnh từ bảng abt_products_1688
                             cand_row = await conn.fetchrow(
                                 'SELECT image_url, subject_trans FROM abt_products_1688 WHERE offer_id = $1',
-                                candidate["offer_id"]
+                                str(candidate["offer_id"])
                             )
                             if cand_row:
                                 other_images.append({
@@ -769,7 +769,7 @@ async def api_filter_item(id: int):
             try:
                 data = pyjson.loads(candidates_json)
                 candidates = data.get("candidates", [])
-                offer_ids = [c.get("offer_id") for c in candidates if c.get("offer_id")]
+                offer_ids = [str(c.get("offer_id")) for c in candidates if c.get("offer_id")]
             except Exception:
                 pass
         # Lấy thêm trường price và subject_trans

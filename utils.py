@@ -103,9 +103,11 @@ async def get_next_image_to_label(pool):
 async def get_candidates_info(pool, offer_ids):
     if not offer_ids:
         return []
+    # Convert offer_ids to strings if they are integers
+    offer_ids_str = [str(offer_id) for offer_id in offer_ids]
     async with pool.acquire() as conn:
         rows = await conn.fetch(
-            'SELECT offer_id, image_url, subject_trans, price FROM abt_products_1688 WHERE offer_id = ANY($1)', offer_ids
+            'SELECT offer_id, image_url, subject_trans, price FROM abt_products_1688 WHERE offer_id = ANY($1)', offer_ids_str
         )
         return [dict(row) for row in rows]
 
