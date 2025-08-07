@@ -1,0 +1,222 @@
+{
+  "timestamp": "20250807_122642",
+  "original_image_url": "https://cbu01.alicdn.com/O1CN01UexG8r22vPWVZeKJl_!!2217161847182-0-cib.jpg",
+  "original_local_path": "translated_images\\original_20250807_122642.jpg",
+  "original_local_url": "/translated_images/original_20250807_122642.jpg",
+  "translated_image_url": "https://aib-image.oss-ap-southeast-1.aliyuncs.com/tufan%2F1c08ad92-734f-11f0-a453-00163e180f48.jpg?OSSAccessKeyId=LTAI5tSEGjGp5wixZgHLc3bV&Expires=4971216405&Signature=FF2V4qQyZDD8OgaoHqzW%2FN4BjOA%3D",
+  "translated_local_path": "translated_images\\translated_20250807_122642.jpg",
+  "translated_local_url": "/translated_images/translated_20250807_122642.jpg",
+  "source_language": "auto",
+  "target_language": "en",
+  "api_response": {
+    "data": {
+      "usage": 1,
+      "result": {
+        "data": {
+          "message": [],
+          "usageMap": "{\"usage\":1}",
+          "structData": {
+            "message": [
+              {
+                "edit_info": {
+                  "goodsRects": {
+                    "top": 152,
+                    "left": 73,
+                    "width": 648,
+                    "height": 409
+                  },
+                  "languages": [
+                    "en"
+                  ],
+                  "resultImageIds": [
+                    "1bdccf88-734f-11f0-a453-00163e180f48"
+                  ],
+                  "textAreas": [
+                    {
+                      "horizontalLayout": "center",
+                      "verticalLayout": "center",
+                      "color": "#000000",
+                      "texts": [
+                        {
+                          "valid": true,
+                          "horizontalLayout": "center",
+                          "verticalLayout": "center",
+                          "color": "#e6f6fa",
+                          "ovis_err_msg": "| ovis time: 0.854",
+                          "imageRect": {
+                            "top": 583,
+                            "left": 131,
+                            "width": 147,
+                            "degree": 0,
+                            "height": 75
+                          },
+                          "fontsize": 22,
+                          "language": "en",
+                          "value": "Before Installation",
+                          "textRect": {
+                            "top": 598,
+                            "left": 142,
+                            "width": 126,
+                            "degree": 0,
+                            "height": 46
+                          },
+                          "trans_model_name": "MarcoVL2-8B-PicTrans",
+                          "lineCount": 2
+                        }
+                      ],
+                      "fontsize": 46,
+                      "content": "安装前",
+                      "lineCount": 1
+                    },
+                    {
+                      "horizontalLayout": "center",
+                      "verticalLayout": "center",
+                      "color": "#000000",
+                      "texts": [
+                        {
+                          "valid": true,
+                          "horizontalLayout": "center",
+                          "verticalLayout": "center",
+                          "color": "#e7f7fb",
+                          "ovis_err_msg": "| ovis time: 0.854",
+                          "imageRect": {
+                            "top": 580,
+                            "left": 512,
+                            "width": 148,
+                            "degree": 0,
+                            "height": 81
+                          },
+                          "fontsize": 23,
+                          "language": "en",
+                          "value": "After Installation",
+                          "textRect": {
+                            "top": 596,
+                            "left": 523,
+                            "width": 126,
+                            "degree": 0,
+                            "height": 50
+                          },
+                          "trans_model_name": "MarcoVL2-8B-PicTrans",
+                          "lineCount": 2
+                        }
+                      ],
+                      "fontsize": 48,
+                      "content": "安装后",
+                      "lineCount": 1
+                    },
+                    {
+                      "horizontalLayout": "left",
+                      "verticalLayout": "center",
+                      "color": "#000000",
+                      "texts": [
+                        {
+                          "valid": true,
+                          "horizontalLayout": "left",
+                          "verticalLayout": "center",
+                          "color": "#181a23",
+                          "ovis_err_msg": "| ovis time: 0.854",
+                          "imageRect": {
+                            "top": 655,
+                            "left": 62,
+                            "width": 299,
+                            "degree": 0,
+                            "height": 49
+                          },
+                          "fontsize": 13,
+                          "language": "en",
+                          "value": "Washing machine shifts and vibrates significantly",
+                          "textRect": {
+                            "top": 665,
+                            "left": 69,
+                            "width": 320,
+                            "degree": 0,
+                            "height": 30
+                          },
+                          "trans_model_name": "MarcoVL2-8B-PicTrans",
+                          "lineCount": 1
+                        }
+                      ],
+                      "fontsize": 29,
+                      "content": "洗衣机工作移位震动大",
+                      "lineCount": 1
+                    },
+                    {
+                      "horizontalLayout": "center",
+                      "verticalLayout": "center",
+                      "color": "#000000",
+                      "texts": [
+                        {
+                          "valid": true,
+                          "horizontalLayout": "center",
+                          "verticalLayout": "center",
+                          "color": "#1f2127",
+                          "ovis_err_msg": "| ovis time: 0.854",
+                          "imageRect": {
+                            "top": 655,
+                            "left": 425,
+                            "width": 330,
+                            "degree": 0,
+                            "height": 50
+                          },
+                          "fontsize": 15,
+                          "language": "en",
+                          "value": "Large air pressure rubber suction cups, anti-slip and stable",
+                          "textRect": {
+                            "top": 665,
+                            "left": 414,
+                            "width": 352,
+                            "degree": 0,
+                            "height": 30
+                          },
+                          "trans_model_name": "MarcoVL2-8B-PicTrans",
+                          "lineCount": 2
+                        }
+                      ],
+                      "fontsize": 31,
+                      "content": "大气压橡胶吸盘防滑稳固",
+                      "lineCount": 1
+                    }
+                  ],
+                  "repairedUrl": "https://aib-image.oss-ap-southeast-1.aliyuncs.com/tufan%2F1b5e8df8-734f-11f0-a0f5-00163e180f48.png?OSSAccessKeyId=LTAI5tSEGjGp5wixZgHLc3bV&Expires=4971216404&Signature=rxjthoqDZCFVKEj0Og9Vx4a1vUI%3D",
+                  "font": [
+                    "AlibabaSans-Regular"
+                  ]
+                },
+                "src_image": "https://cbu01.alicdn.com/O1CN01UexG8r22vPWVZeKJl_!!2217161847182-0-cib.jpg",
+                "result_list": [
+                  {
+                    "fileUrl": "https://aib-image.oss-ap-southeast-1.aliyuncs.com/tufan%2F1c08ad92-734f-11f0-a453-00163e180f48.jpg?OSSAccessKeyId=LTAI5tSEGjGp5wixZgHLc3bV&Expires=4971216405&Signature=FF2V4qQyZDD8OgaoHqzW%2FN4BjOA%3D",
+                    "language": "en"
+                  }
+                ]
+              }
+            ],
+            "usageMap": "{\"usage\": 1}"
+          }
+        },
+        "success": true,
+        "requestId": "213bf77217545444031982914ee371"
+      }
+    },
+    "resCode": 200,
+    "resMessage": "success",
+    "code": "0",
+    "request_id": "2102ffe817545444032044315",
+    "_trace_id_": "213bf77217545444031982914ee371"
+  },
+  "detailed_info": {
+    "text_areas": [],
+    "fonts": [
+      "AlibabaSans-Regular"
+    ],
+    "colors": [],
+    "text_positions": [],
+    "translation_summary": {
+      "total_text_areas": 0,
+      "total_texts": 0,
+      "languages_detected": [],
+      "fonts_used": 1,
+      "colors_used": 0
+    }
+  }
+}

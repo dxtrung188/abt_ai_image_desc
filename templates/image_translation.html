@@ -54,31 +54,26 @@
         .upload-form {
             text-align: center;
         }
-        .file-input-wrapper {
-            position: relative;
-            display: inline-block;
+        .url-input-wrapper {
             margin: 20px 0;
         }
-        .file-input {
-            position: absolute;
-            opacity: 0;
+        .url-input {
             width: 100%;
-            height: 100%;
-            cursor: pointer;
-        }
-        .file-input-label {
-            display: inline-block;
-            padding: 15px 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            max-width: 500px;
+            padding: 15px 20px;
+            border: 2px solid #dee2e6;
             border-radius: 25px;
-            cursor: pointer;
+            font-size: 16px;
             transition: all 0.3s ease;
-            font-weight: 500;
+            background: white;
         }
-        .file-input-label:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        .url-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .url-input::placeholder {
+            color: #6c757d;
         }
         .language-selector {
             margin: 20px 0;
@@ -190,12 +185,91 @@
             margin: 20px 0;
             border: 1px solid #c3e6cb;
         }
-        .file-info {
+        .url-info {
             margin: 10px 0;
             padding: 10px;
             background: #e9ecef;
             border-radius: 5px;
             font-size: 14px;
+            word-break: break-all;
+        }
+        .detailed-info {
+            margin-top: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        .detailed-info h3 {
+            color: #495057;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 5px;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+        .info-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .info-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .text-area-item {
+            background: #f8f9fa;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-left: 3px solid #667eea;
+        }
+        .text-item {
+            background: white;
+            border-radius: 3px;
+            padding: 8px;
+            margin: 5px 0;
+            border-left: 2px solid #28a745;
+        }
+        .position-info {
+            background: #e3f2fd;
+            border-radius: 3px;
+            padding: 5px;
+            margin: 2px 0;
+            font-size: 12px;
+        }
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .stat-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        .log-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 15px;
         }
         @media (max-width: 768px) {
             .result-grid {
@@ -216,6 +290,9 @@
                 flex-wrap: wrap;
                 justify-content: center;
             }
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -232,6 +309,9 @@
                 </a>
                 <a href="/image_translation" style="color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; transition: background 0.3s; background: rgba(255,255,255,0.2);" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">
                     🖼️ Image Translation
+                </a>
+                <a href="/translation_history" style="color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; transition: background 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='transparent'">
+                    📈 Translation History
                 </a>
                 <a href="/analyze_image" style="color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; transition: background 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='transparent'">
                     🤖 AI Analysis
@@ -255,17 +335,14 @@
         <div class="content">
             <div class="upload-section">
                 <form class="upload-form" id="uploadForm">
-                    <h2>Upload Ảnh</h2>
-                    <p>Chọn ảnh chứa văn bản cần dịch</p>
+                    <h2>Nhập Link Ảnh</h2>
+                    <p>Dán link ảnh chứa văn bản cần dịch</p>
                     
-                    <div class="file-input-wrapper">
-                        <input type="file" id="imageFile" class="file-input" accept="image/*" required>
-                        <label for="imageFile" class="file-input-label">
-                            📁 Chọn ảnh
-                        </label>
+                    <div class="url-input-wrapper">
+                        <input type="url" id="imageUrl" class="url-input" placeholder="https://example.com/image.jpg" required>
                     </div>
                     
-                    <div id="fileInfo" class="file-info" style="display: none;"></div>
+                    <div id="urlInfo" class="url-info" style="display: none;"></div>
                     
                     <div class="language-selector">
                         <div class="language-group">
@@ -340,25 +417,23 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('uploadForm');
-            const fileInput = document.getElementById('imageFile');
-            const fileInfo = document.getElementById('fileInfo');
+            const urlInput = document.getElementById('imageUrl');
+            const urlInfo = document.getElementById('urlInfo');
             const loading = document.getElementById('loading');
             const submitBtn = document.getElementById('submitBtn');
             const resultSection = document.getElementById('resultSection');
             const resultGrid = document.getElementById('resultGrid');
 
-            // Hiển thị thông tin file khi chọn
-            fileInput.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    fileInfo.style.display = 'block';
-                    fileInfo.innerHTML = `
-                        <strong>Tên file:</strong> ${file.name}<br>
-                        <strong>Kích thước:</strong> ${(file.size / 1024 / 1024).toFixed(2)} MB<br>
-                        <strong>Loại file:</strong> ${file.type}
+            // Hiển thị thông tin URL khi nhập
+            urlInput.addEventListener('input', function(e) {
+                const url = e.target.value;
+                if (url) {
+                    urlInfo.style.display = 'block';
+                    urlInfo.innerHTML = `
+                        <strong>Link ảnh:</strong> ${url}
                     `;
                 } else {
-                    fileInfo.style.display = 'none';
+                    urlInfo.style.display = 'none';
                 }
             });
 
@@ -366,9 +441,9 @@
             form.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
-                const file = fileInput.files[0];
-                if (!file) {
-                    alert('Vui lòng chọn một ảnh');
+                const imageUrl = urlInput.value.trim();
+                if (!imageUrl) {
+                    alert('Vui lòng nhập link ảnh');
                     return;
                 }
 
@@ -382,7 +457,7 @@
 
                 try {
                     const formData = new FormData();
-                    formData.append('image', file);
+                    formData.append('image_url', imageUrl);
                     formData.append('source_language', sourceLanguage);
                     formData.append('target_language', targetLanguage);
 
@@ -395,6 +470,104 @@
 
                     if (result.success) {
                         // Hiển thị kết quả
+                        let detailedInfoHTML = '';
+                        
+                        if (result.detailed_info) {
+                            const info = result.detailed_info;
+                            detailedInfoHTML = `
+                                <div class="detailed-info">
+                                    <h3>📊 Thông Tin Chi Tiết Dịch Thuật</h3>
+                                    
+                                    <div class="summary-stats">
+                                        <div class="stat-item">
+                                            <div class="stat-number">${info.translation_summary?.total_text_areas || 0}</div>
+                                            <div class="stat-label">Vùng Văn Bản</div>
+                                        </div>
+                                        <div class="stat-item">
+                                            <div class="stat-number">${info.translation_summary?.total_texts || 0}</div>
+                                            <div class="stat-label">Đoạn Văn Bản</div>
+                                        </div>
+                                        <div class="stat-item">
+                                            <div class="stat-number">${info.translation_summary?.languages_detected?.length || 0}</div>
+                                            <div class="stat-label">Ngôn Ngữ</div>
+                                        </div>
+                                        <div class="stat-item">
+                                            <div class="stat-number">${info.translation_summary?.fonts_used || 0}</div>
+                                            <div class="stat-label">Font Chữ</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="info-grid">
+                                        ${info.text_areas && info.text_areas.length > 0 ? `
+                                            <div class="info-card">
+                                                <h4>📝 Vùng Văn Bản (${info.text_areas.length})</h4>
+                                                ${info.text_areas.map(area => `
+                                                    <div class="text-area-item">
+                                                        <strong>Nội dung:</strong> ${area.content || 'N/A'}<br>
+                                                        <strong>Font size:</strong> ${area.fontsize || 'N/A'}<br>
+                                                        <strong>Màu sắc:</strong> <span style="color: ${area.color || '#000'}">${area.color || 'N/A'}</span><br>
+                                                        <strong>Số dòng:</strong> ${area.lineCount || 0}<br>
+                                                        <strong>Layout:</strong> ${area.horizontalLayout || 'N/A'} - ${area.verticalLayout || 'N/A'}<br>
+                                                        ${area.texts && area.texts.length > 0 ? `
+                                                            <strong>Chi tiết văn bản:</strong>
+                                                            ${area.texts.map(text => `
+                                                                <div class="text-item">
+                                                                    <strong>Nội dung:</strong> ${text.value || 'N/A'}<br>
+                                                                    <strong>Ngôn ngữ:</strong> ${text.language || 'N/A'}<br>
+                                                                    <strong>Font size:</strong> ${text.fontsize || 'N/A'}<br>
+                                                                    <strong>Màu sắc:</strong> <span style="color: ${text.color || '#000'}">${text.color || 'N/A'}</span><br>
+                                                                    <strong>Hợp lệ:</strong> ${text.valid ? '✅' : '❌'}<br>
+                                                                    <strong>Model:</strong> ${text.trans_model_name || 'N/A'}
+                                                                </div>
+                                                            `).join('')}
+                                                        ` : ''}
+                                                    </div>
+                                                `).join('')}
+                                            </div>
+                                        ` : ''}
+                                        
+                                        ${info.text_positions && info.text_positions.length > 0 ? `
+                                            <div class="info-card">
+                                                <h4>📍 Vị Trí Văn Bản (${info.text_positions.length})</h4>
+                                                ${info.text_positions.map(pos => `
+                                                    <div class="position-info">
+                                                        <strong>Văn bản:</strong> ${pos.text || 'N/A'}<br>
+                                                        <strong>Ngôn ngữ:</strong> ${pos.language || 'N/A'}<br>
+                                                        <strong>Font size:</strong> ${pos.fontsize || 'N/A'}<br>
+                                                        <strong>Vị trí:</strong> Top: ${pos.position?.top || 'N/A'}, Left: ${pos.position?.left || 'N/A'}, Width: ${pos.position?.width || 'N/A'}, Height: ${pos.position?.height || 'N/A'}
+                                                    </div>
+                                                `).join('')}
+                                            </div>
+                                        ` : ''}
+                                        
+                                        ${info.fonts && info.fonts.length > 0 ? `
+                                            <div class="info-card">
+                                                <h4>🔤 Font Chữ (${info.fonts.length})</h4>
+                                                ${info.fonts.map(font => `<div style="padding: 5px; background: #f8f9fa; margin: 2px 0; border-radius: 3px;">${font}</div>`).join('')}
+                                            </div>
+                                        ` : ''}
+                                        
+                                        ${info.colors && info.colors.length > 0 ? `
+                                            <div class="info-card">
+                                                <h4>🎨 Màu Sắc (${info.colors.length})</h4>
+                                                ${info.colors.map(color => `
+                                                    <div style="padding: 5px; margin: 2px 0; border-radius: 3px; background: ${color}; color: ${color.startsWith('#') && parseInt(color.slice(1), 16) > 0xffffff/2 ? '#000' : '#fff'};">
+                                                        ${color}
+                                                    </div>
+                                                `).join('')}
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                    
+                                    ${result.log_file ? `
+                                        <div class="log-info">
+                                            <strong>📄 Log file đã được lưu:</strong> ${result.log_file}
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            `;
+                        }
+                        
                         resultGrid.innerHTML = `
                             <div class="image-container">
                                 <h3>Ảnh Gốc</h3>
@@ -404,6 +577,7 @@
                                 <h3>Ảnh Đã Dịch</h3>
                                 <img src="${result.translated_image_url}" alt="Ảnh đã dịch">
                             </div>
+                            ${detailedInfoHTML}
                         `;
                         resultSection.style.display = 'block';
                     } else {

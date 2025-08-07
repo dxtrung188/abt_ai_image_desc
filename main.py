@@ -34,7 +34,9 @@ app = FastAPI()
 
 # Mount static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
-app.mount("/static/translated_images", StaticFiles(directory="translated_images"), name="translated_images")
+
+# Mount translated_images as a separate static directory
+app.mount("/translated_images", StaticFiles(directory="translated_images"), name="translated_images")
 
 # Jinja2 templates
 templates = Jinja2Templates(directory="templates")
@@ -473,36 +475,40 @@ async def image_translation_page(request: Request):
 
 @app.post("/translate_image")
 async def translate_image(
-    image: UploadFile = Form(...),
+    image_url: str = Form(...),
     source_language: str = Form(...),
     target_language: str = Form(...)
 ):
-    """API endpoint để dịch ảnh - sử dụng translation_mllm API"""
+    """API endpoint để dịch ảnh - sử dụng translation_mllm API với URL input"""
     try:
-        # Kiểm tra file
-        if not image.filename:
-            return JSONResponse({"success": False, "message": "Không có file được upload"})
+        # Kiểm tra URL
+        if not image_url or not image_url.strip():
+            return JSONResponse({"success": False, "message": "Không có URL ảnh được cung cấp"})
         
-        # Tạo tên file unique
+        # Tạo tên file unique cho việc lưu trữ local
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        original_filename = image.filename
-        file_extension = os.path.splitext(original_filename)[1]
+        file_extension = ".jpg"  # Default extension
         unique_filename = f"original_{timestamp}{file_extension}"
         
-        # Lưu file gốc
-        original_path = os.path.join(TRANSLATED_IMAGES_DIR, unique_filename)
+        # Tạo thư mục nếu chưa có
         os.makedirs(TRANSLATED_IMAGES_DIR, exist_ok=True)
         
-        with open(original_path, "wb") as f:
-            content = await image.read()
-            f.write(content)
+        # Download và lưu ảnh gốc từ URL
+        original_path = os.path.join(TRANSLATED_IMAGES_DIR, unique_filename)
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(image_url) as response:
+                    if response.status == 200:
+                        content = await response.read()
+                        with open(original_path, "wb") as f:
+                            f.write(content)
+                    else:
+                        return JSONResponse({"success": False, "message": f"Không thể download ảnh từ URL: {response.status}"})
+        except Exception as e:
+            return JSONResponse({"success": False, "message": f"Lỗi khi download ảnh: {str(e)}"})
         
-        # Tạo URL cho file (giả sử server có thể serve static files)
-        original_url = f"/static/translated_images/{unique_filename}"
-        
-        # Upload file lên một service để có URL public (hoặc sử dụng local server)
-        # Ở đây tôi sẽ giả định file được serve qua static files
-        image_url = f"http://localhost:8000{original_url}"
+        # Tạo URL local cho ảnh gốc
+        original_url = f"/translated_images/{unique_filename}"
         
         # Gọi Aidge API - translation_mllm là synchronous
         print(f"🔍 DEBUG: Calling Aidge API with image_url: {image_url}")
@@ -564,19 +570,143 @@ async def translate_image(
                     with open(translated_path, "wb") as f:
                         f.write(translated_content)
                     
-                    translated_url = f"/static/translated_images/{translated_filename}"
+                    translated_url = f"/translated_images/{translated_filename}"
+                    
+                    # Trích xuất thông tin chi tiết từ response
+                    detailed_info = extract_detailed_translation_info(data)
+                    
+                    # Lưu log kết quả translate
+                    log_data = {
+                        "timestamp": timestamp,
+                        "original_image_url": image_url,
+                        "original_local_path": original_path,
+                        "original_local_url": original_url,
+                        "translated_image_url": translated_image_url,
+                        "translated_local_path": translated_path,
+                        "translated_local_url": translated_url,
+                        "source_language": source_language,
+                        "target_language": target_language,
+                        "api_response": result,
+                        "detailed_info": detailed_info
+                    }
+                    
+                    # Lưu log vào file JSON
+                    log_filename = f"translation_log_{timestamp}.json"
+                    log_path = os.path.join(TRANSLATED_IMAGES_DIR, log_filename)
+                    with open(log_path, "w", encoding="utf-8") as f:
+                        json.dump(log_data, f, ensure_ascii=False, indent=2)
                     
                     return JSONResponse({
                         "success": True,
                         "original_image_url": original_url,
                         "translated_image_url": translated_url,
-                        "message": "Dịch ảnh thành công"
+                        "message": "Dịch ảnh thành công",
+                        "detailed_info": detailed_info,
+                        "log_file": log_filename
                     })
                 else:
                     return JSONResponse({"success": False, "message": "Không thể download ảnh đã dịch"})
         
     except Exception as e:
         return JSONResponse({"success": False, "message": f"Lỗi xử lý: {str(e)}"})
+
+def extract_detailed_translation_info(data):
+    """Trích xuất thông tin chi tiết từ response của Aidge API"""
+    detailed_info = {
+        "text_areas": [],
+        "fonts": [],
+        "colors": [],
+        "text_positions": [],
+        "translation_summary": {}
+    }
+    
+    try:
+        # Lấy thông tin từ structData.message
+        struct_data = data.get("result", {}).get("data", {}).get("structData", {})
+        messages = struct_data.get("message", [])
+        
+        if messages:
+            message = messages[0]
+            
+            # Lấy thông tin text areas
+            text_areas = message.get("textAreas", [])
+            for area in text_areas:
+                area_info = {
+                    "content": area.get("content", ""),
+                    "fontsize": area.get("fontsize", ""),
+                    "lineCount": area.get("lineCount", 0),
+                    "horizontalLayout": area.get("horizontalLayout", ""),
+                    "verticalLayout": area.get("verticalLayout", ""),
+                    "color": area.get("color", ""),
+                    "texts": []
+                }
+                
+                # Lấy thông tin chi tiết của từng text
+                texts = area.get("texts", [])
+                for text in texts:
+                    text_info = {
+                        "value": text.get("value", ""),
+                        "language": text.get("language", ""),
+                        "fontsize": text.get("fontsize", ""),
+                        "color": text.get("color", ""),
+                        "valid": text.get("valid", False),
+                        "lineCount": text.get("lineCount", 0),
+                        "trans_model_name": text.get("trans_model_name", ""),
+                        "imageRect": text.get("imageRect", {}),
+                        "textRect": text.get("textRect", {})
+                    }
+                    area_info["texts"].append(text_info)
+                
+                detailed_info["text_areas"].append(area_info)
+            
+            # Lấy thông tin fonts
+            fonts = message.get("edit_info", {}).get("font", [])
+            detailed_info["fonts"] = fonts
+            
+            # Lấy thông tin colors từ text areas
+            colors = set()
+            for area in text_areas:
+                if area.get("color"):
+                    colors.add(area.get("color"))
+                for text in area.get("texts", []):
+                    if text.get("color"):
+                        colors.add(text.get("color"))
+            detailed_info["colors"] = list(colors)
+            
+            # Lấy thông tin vị trí text
+            for area in text_areas:
+                for text in area.get("texts", []):
+                    if text.get("imageRect"):
+                        position_info = {
+                            "text": text.get("value", ""),
+                            "position": text.get("imageRect", {}),
+                            "language": text.get("language", ""),
+                            "fontsize": text.get("fontsize", "")
+                        }
+                        detailed_info["text_positions"].append(position_info)
+            
+            # Tạo summary
+            total_texts = sum(len(area.get("texts", [])) for area in text_areas)
+            total_areas = len(text_areas)
+            languages = set()
+            for area in text_areas:
+                for text in area.get("texts", []):
+                    if text.get("language"):
+                        languages.add(text.get("language"))
+            
+            detailed_info["translation_summary"] = {
+                "total_text_areas": total_areas,
+                "total_texts": total_texts,
+                "languages_detected": list(languages),
+                "fonts_used": len(fonts),
+                "colors_used": len(colors)
+            }
+    
+    except Exception as e:
+        print(f"Lỗi khi trích xuất thông tin chi tiết: {e}")
+        detailed_info["error"] = str(e)
+    
+    return detailed_info
 
 @app.get("/admin", response_class=HTMLResponse)
 async def admin_page(request: Request):
@@ -1042,3 +1172,33 @@ async def api_analyze_history(limit: int = 50):
             result.append(item)
         
         return JSONResponse(result) 
+
+@app.get("/translation_history", response_class=HTMLResponse)
+async def translation_history_page(request: Request):
+    """Trang lịch sử translate"""
+    return templates.TemplateResponse("translation_history.html", {"request": request})
+
+@app.get("/api/translation_history")
+async def api_translation_history():
+    """API để lấy lịch sử translate"""
+    try:
+        # Tìm tất cả file log trong thư mục translated_images
+        log_files = []
+        if os.path.exists(TRANSLATED_IMAGES_DIR):
+            for filename in os.listdir(TRANSLATED_IMAGES_DIR):
+                if filename.startswith("translation_log_") and filename.endswith(".json"):
+                    log_path = os.path.join(TRANSLATED_IMAGES_DIR, filename)
+                    try:
+                        with open(log_path, "r", encoding="utf-8") as f:
+                            log_data = json.load(f)
+                            log_data["log_filename"] = filename
+                            log_files.append(log_data)
+                    except Exception as e:
+                        print(f"Lỗi đọc file log {filename}: {e}")
+        
+        # Sắp xếp theo timestamp (mới nhất trước)
+        log_files.sort(key=lambda x: x.get("timestamp", ""), reverse=True)
+        
+        return JSONResponse(log_files)
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500) 
