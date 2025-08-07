@@ -627,9 +627,10 @@ def extract_detailed_translation_info(data):
         
         if messages:
             message = messages[0]
+            edit_info = message.get("edit_info", {})
             
-            # Lấy thông tin text areas
-            text_areas = message.get("textAreas", [])
+            # Lấy thông tin text areas từ edit_info
+            text_areas = edit_info.get("textAreas", [])
             for area in text_areas:
                 area_info = {
                     "content": area.get("content", ""),
@@ -659,8 +660,8 @@ def extract_detailed_translation_info(data):
                 
                 detailed_info["text_areas"].append(area_info)
             
-            # Lấy thông tin fonts
-            fonts = message.get("edit_info", {}).get("font", [])
+            # Lấy thông tin fonts từ edit_info
+            fonts = edit_info.get("font", [])
             detailed_info["fonts"] = fonts
             
             # Lấy thông tin colors từ text areas

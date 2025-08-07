@@ -1,0 +1,330 @@
+{
+  "timestamp": "20250807_124717",
+  "original_image_url": "https://ae01.alicdn.com/kf/Sa78257f1d9a34dad8ee494178db12ec8l.jpg",
+  "original_local_path": "translated_images\\original_20250807_124717.jpg",
+  "original_local_url": "/translated_images/original_20250807_124717.jpg",
+  "translated_image_url": "https://aib-image.oss-ap-southeast-1.aliyuncs.com/tufan%2Ffc33d584-7351-11f0-a7c6-00163e180f48.jpg?OSSAccessKeyId=LTAI5tSEGjGp5wixZgHLc3bV&Expires=4971217641&Signature=v7QtOV9kwJMVkLYpZQNleilFUCw%3D",
+  "translated_local_path": "translated_images\\translated_20250807_124717.jpg",
+  "translated_local_url": "/translated_images/translated_20250807_124717.jpg",
+  "source_language": "en",
+  "target_language": "vi",
+  "api_response": {
+    "data": {
+      "usage": 1,
+      "result": {
+        "data": {
+          "message": [],
+          "usageMap": "{\"usage\":1}",
+          "structData": {
+            "message": [
+              {
+                "edit_info": {
+                  "goodsRects": {
+                    "top": 379,
+                    "left": 108,
+                    "width": 691,
+                    "height": 811
+                  },
+                  "languages": [
+                    "vi"
+                  ],
+                  "resultImageIds": [
+                    "fc10f640-7351-11f0-a7c6-00163e180f48"
+                  ],
+                  "textAreas": [
+                    {
+                      "horizontalLayout": "left",
+                      "verticalLayout": "center",
+                      "color": "#000000",
+                      "texts": [
+                        {
+                          "valid": true,
+                          "horizontalLayout": "left",
+                          "verticalLayout": "center",
+                          "color": "#fdfaf0",
+                          "ovis_err_msg": "| ovis time: 0.928",
+                          "imageRect": {
+                            "top": 74,
+                            "left": 76,
+                            "width": 120,
+                            "degree": 0,
+                            "height": 54
+                          },
+                          "fontsize": 16,
+                          "language": "vi",
+                          "value": "Máy bay không người lái",
+                          "textRect": {
+                            "top": 85,
+                            "left": 84,
+                            "width": 124,
+                            "degree": 0,
+                            "height": 32
+                          },
+                          "trans_model_name": "MarcoVL2-8B-PicTrans",
+                          "lineCount": 2
+                        }
+                      ],
+                      "fontsize": 33,
+                      "content": "DRONE",
+                      "lineCount": 1
+                    },
+                    {
+                      "horizontalLayout": "left",
+                      "verticalLayout": "center",
+                      "color": "#000000",
+                      "texts": [
+                        {
+                          "valid": true,
+                          "horizontalLayout": "left",
+                          "verticalLayout": "center",
+                          "color": "#3d3a3a",
+                          "ovis_err_msg": "| ovis time: 0.928",
+                          "imageRect": {
+                            "top": 170,
+                            "left": 45,
+                            "width": 734,
+                            "degree": 0,
+                            "height": 235
+                          },
+                          "fontsize": 53,
+                          "language": "vi",
+                          "value": "Tránh chướng ngại vật bằng cảm ứng mới Bắt đầu chỉ trong một giây",
+                          "textRect": {
+                            "top": 185,
+                            "left": 55,
+                            "width": 714,
+                            "degree": 0,
+                            "height": 206
+                          },
+                          "trans_model_name": "MarcoVL2-8B-PicTrans",
+                          "lineCount": 3
+                        }
+                      ],
+                      "fontsize": 45,
+                      "content": "New induction obstacle avoidance Get started in one second",
+                      "lineCount": 3
+                    },
+                    {
+                      "horizontalLayout": "left",
+                      "verticalLayout": "center",
+                      "color": "#000000",
+                      "texts": [
+                        {
+                          "valid": true,
+                          "horizontalLayout": "left",
+                          "verticalLayout": "center",
+                          "color": "#515151",
+                          "ovis_err_msg": "| ovis time: 0.928",
+                          "imageRect": {
+                            "top": 420,
+                            "left": 47,
+                            "width": 345,
+                            "degree": 0,
+                            "height": 82
+                          },
+                          "fontsize": 24,
+                          "language": "vi",
+                          "value": "Mỗi bức ảnh trên không đều là một tác phẩm nghệ thuật",
+                          "textRect": {
+                            "top": 429,
+                            "left": 53,
+                            "width": 334,
+                            "degree": 0,
+                            "height": 64
+                          },
+                          "trans_model_name": "MarcoVL2-8B-PicTrans",
+                          "lineCount": 2
+                        }
+                      ],
+                      "fontsize": 27,
+                      "content": "Every aerial photograph is a work of art",
+                      "lineCount": 2
+                    }
+                  ],
+                  "repairedUrl": "https://aib-image.oss-ap-southeast-1.aliyuncs.com/tufan%2Ffb936824-7351-11f0-a8d1-00163e180f48.png?OSSAccessKeyId=LTAI5tSEGjGp5wixZgHLc3bV&Expires=4971217639&Signature=dqJHhja2d635D5cIBo7r7l23slw%3D",
+                  "font": [
+                    "AlibabaSansViet-Bd"
+                  ]
+                },
+                "src_image": "https://ae01.alicdn.com/kf/Sa78257f1d9a34dad8ee494178db12ec8l.jpg",
+                "result_list": [
+                  {
+                    "fileUrl": "https://aib-image.oss-ap-southeast-1.aliyuncs.com/tufan%2Ffc33d584-7351-11f0-a7c6-00163e180f48.jpg?OSSAccessKeyId=LTAI5tSEGjGp5wixZgHLc3bV&Expires=4971217641&Signature=v7QtOV9kwJMVkLYpZQNleilFUCw%3D",
+                    "language": "vi"
+                  }
+                ]
+              }
+            ],
+            "usageMap": "{\"usage\": 1}"
+          }
+        },
+        "success": true,
+        "requestId": "213bf77217545456389667120ee36b"
+      }
+    },
+    "resCode": 200,
+    "resMessage": "success",
+    "code": "0",
+    "request_id": "2102ffe817545456389738557",
+    "_trace_id_": "213bf77217545456389667120ee36b"
+  },
+  "detailed_info": {
+    "text_areas": [
+      {
+        "content": "DRONE",
+        "fontsize": 33,
+        "lineCount": 1,
+        "horizontalLayout": "left",
+        "verticalLayout": "center",
+        "color": "#000000",
+        "texts": [
+          {
+            "value": "Máy bay không người lái",
+            "language": "vi",
+            "fontsize": 16,
+            "color": "#fdfaf0",
+            "valid": true,
+            "lineCount": 2,
+            "trans_model_name": "MarcoVL2-8B-PicTrans",
+            "imageRect": {
+              "top": 74,
+              "left": 76,
+              "width": 120,
+              "degree": 0,
+              "height": 54
+            },
+            "textRect": {
+              "top": 85,
+              "left": 84,
+              "width": 124,
+              "degree": 0,
+              "height": 32
+            }
+          }
+        ]
+      },
+      {
+        "content": "New induction obstacle avoidance Get started in one second",
+        "fontsize": 45,
+        "lineCount": 3,
+        "horizontalLayout": "left",
+        "verticalLayout": "center",
+        "color": "#000000",
+        "texts": [
+          {
+            "value": "Tránh chướng ngại vật bằng cảm ứng mới Bắt đầu chỉ trong một giây",
+            "language": "vi",
+            "fontsize": 53,
+            "color": "#3d3a3a",
+            "valid": true,
+            "lineCount": 3,
+            "trans_model_name": "MarcoVL2-8B-PicTrans",
+            "imageRect": {
+              "top": 170,
+              "left": 45,
+              "width": 734,
+              "degree": 0,
+              "height": 235
+            },
+            "textRect": {
+              "top": 185,
+              "left": 55,
+              "width": 714,
+              "degree": 0,
+              "height": 206
+            }
+          }
+        ]
+      },
+      {
+        "content": "Every aerial photograph is a work of art",
+        "fontsize": 27,
+        "lineCount": 2,
+        "horizontalLayout": "left",
+        "verticalLayout": "center",
+        "color": "#000000",
+        "texts": [
+          {
+            "value": "Mỗi bức ảnh trên không đều là một tác phẩm nghệ thuật",
+            "language": "vi",
+            "fontsize": 24,
+            "color": "#515151",
+            "valid": true,
+            "lineCount": 2,
+            "trans_model_name": "MarcoVL2-8B-PicTrans",
+            "imageRect": {
+              "top": 420,
+              "left": 47,
+              "width": 345,
+              "degree": 0,
+              "height": 82
+            },
+            "textRect": {
+              "top": 429,
+              "left": 53,
+              "width": 334,
+              "degree": 0,
+              "height": 64
+            }
+          }
+        ]
+      }
+    ],
+    "fonts": [
+      "AlibabaSansViet-Bd"
+    ],
+    "colors": [
+      "#000000",
+      "#515151",
+      "#3d3a3a",
+      "#fdfaf0"
+    ],
+    "text_positions": [
+      {
+        "text": "Máy bay không người lái",
+        "position": {
+          "top": 74,
+          "left": 76,
+          "width": 120,
+          "degree": 0,
+          "height": 54
+        },
+        "language": "vi",
+        "fontsize": 16
+      },
+      {
+        "text": "Tránh chướng ngại vật bằng cảm ứng mới Bắt đầu chỉ trong một giây",
+        "position": {
+          "top": 170,
+          "left": 45,
+          "width": 734,
+          "degree": 0,
+          "height": 235
+        },
+        "language": "vi",
+        "fontsize": 53
+      },
+      {
+        "text": "Mỗi bức ảnh trên không đều là một tác phẩm nghệ thuật",
+        "position": {
+          "top": 420,
+          "left": 47,
+          "width": 345,
+          "degree": 0,
+          "height": 82
+        },
+        "language": "vi",
+        "fontsize": 24
+      }
+    ],
+    "translation_summary": {
+      "total_text_areas": 3,
+      "total_texts": 3,
+      "languages_detected": [
+        "vi"
+      ],
+      "fonts_used": 1,
+      "colors_used": 4
+    }
+  }
+}

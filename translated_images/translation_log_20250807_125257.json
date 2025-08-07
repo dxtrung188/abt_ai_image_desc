@@ -1,0 +1,327 @@
+{
+  "timestamp": "20250807_125257",
+  "original_image_url": "https://cbu01.alicdn.com/O1CN01Y7koJ01llTX8XNAhV_!!2215393724859-0-cib.jpg",
+  "original_local_path": "translated_images\\original_20250807_125257.jpg",
+  "original_local_url": "/translated_images/original_20250807_125257.jpg",
+  "translated_image_url": "https://aib-image.oss-ap-southeast-1.aliyuncs.com/tufan%2Fc6811482-7352-11f0-8ab0-00163e180f48.jpg?OSSAccessKeyId=LTAI5tSEGjGp5wixZgHLc3bV&Expires=4971217980&Signature=i7YZ1hXuS3Fueq4GHioo52xg%2BD0%3D",
+  "translated_local_path": "translated_images\\translated_20250807_125257.jpg",
+  "translated_local_url": "/translated_images/translated_20250807_125257.jpg",
+  "source_language": "auto",
+  "target_language": "en",
+  "api_response": {
+    "data": {
+      "usage": 1,
+      "result": {
+        "data": {
+          "message": [],
+          "usageMap": "{\"usage\":1}",
+          "structData": {
+            "message": [
+              {
+                "edit_info": {
+                  "goodsRects": {
+                    "top": 127,
+                    "left": 62,
+                    "width": 677,
+                    "height": 438
+                  },
+                  "languages": [
+                    "en"
+                  ],
+                  "resultImageIds": [
+                    "c66eb512-7352-11f0-8ab0-00163e180f48"
+                  ],
+                  "textAreas": [
+                    {
+                      "horizontalLayout": "center",
+                      "verticalLayout": "center",
+                      "color": "#000000",
+                      "texts": [
+                        {
+                          "valid": true,
+                          "horizontalLayout": "center",
+                          "verticalLayout": "center",
+                          "color": "#000000",
+                          "ovis_err_msg": "| ovis time: 1.017",
+                          "imageRect": {
+                            "top": 617,
+                            "left": 313,
+                            "width": 100,
+                            "degree": 0,
+                            "height": 43
+                          },
+                          "fontsize": 14,
+                          "language": "en",
+                          "value": "Glistening Waves",
+                          "textRect": {
+                            "top": 626,
+                            "left": 304,
+                            "width": 118,
+                            "degree": 0,
+                            "height": 26
+                          },
+                          "trans_model_name": "MarcoVL2-8B-PicTrans",
+                          "lineCount": 1
+                        }
+                      ],
+                      "fontsize": 26,
+                      "content": "波光粼粼",
+                      "lineCount": 1
+                    },
+                    {
+                      "horizontalLayout": "center",
+                      "verticalLayout": "center",
+                      "color": "#000000",
+                      "texts": [
+                        {
+                          "valid": true,
+                          "horizontalLayout": "center",
+                          "verticalLayout": "center",
+                          "color": "#000000",
+                          "ovis_err_msg": "| ovis time: 1.017",
+                          "imageRect": {
+                            "top": 615,
+                            "left": 442,
+                            "width": 57,
+                            "degree": 0,
+                            "height": 49
+                          },
+                          "fontsize": 13,
+                          "language": "en",
+                          "value": "Style D",
+                          "textRect": {
+                            "top": 625,
+                            "left": 449,
+                            "width": 44,
+                            "degree": 0,
+                            "height": 30
+                          },
+                          "trans_model_name": "MarcoVL2-8B-PicTrans",
+                          "lineCount": 1
+                        }
+                      ],
+                      "fontsize": 30,
+                      "content": "D款",
+                      "lineCount": 1
+                    },
+                    {
+                      "horizontalLayout": "center",
+                      "verticalLayout": "center",
+                      "color": "#000000",
+                      "texts": [
+                        {
+                          "valid": true,
+                          "horizontalLayout": "center",
+                          "verticalLayout": "center",
+                          "color": "#000000",
+                          "ovis_err_msg": "| ovis time: 1.017",
+                          "imageRect": {
+                            "top": 691,
+                            "left": 262,
+                            "width": 277,
+                            "degree": 0,
+                            "height": 32
+                          },
+                          "fontsize": 19,
+                          "language": "en",
+                          "value": "Note: Frame color must be selected separately. This image is for reference only.",
+                          "textRect": {
+                            "top": 698,
+                            "left": 14,
+                            "width": 774,
+                            "degree": 0,
+                            "height": 18
+                          },
+                          "trans_model_name": "MarcoVL2-8B-PicTrans",
+                          "lineCount": 1
+                        }
+                      ],
+                      "fontsize": 19,
+                      "content": "注意：框色须自选本图仅作参考",
+                      "lineCount": 1
+                    }
+                  ],
+                  "repairedUrl": "https://aib-image.oss-ap-southeast-1.aliyuncs.com/tufan%2Fc5db1596-7352-11f0-84c1-00163e180f48.png?OSSAccessKeyId=LTAI5tSEGjGp5wixZgHLc3bV&Expires=4971217979&Signature=JWIkH%2FHK6H0MUzZFRzbDzX1w7xg%3D",
+                  "font": [
+                    "AlibabaSans-Regular"
+                  ]
+                },
+                "src_image": "https://cbu01.alicdn.com/O1CN01Y7koJ01llTX8XNAhV_!!2215393724859-0-cib.jpg",
+                "result_list": [
+                  {
+                    "fileUrl": "https://aib-image.oss-ap-southeast-1.aliyuncs.com/tufan%2Fc6811482-7352-11f0-8ab0-00163e180f48.jpg?OSSAccessKeyId=LTAI5tSEGjGp5wixZgHLc3bV&Expires=4971217980&Signature=i7YZ1hXuS3Fueq4GHioo52xg%2BD0%3D",
+                    "language": "en"
+                  }
+                ]
+              }
+            ],
+            "usageMap": "{\"usage\": 1}"
+          }
+        },
+        "success": true,
+        "requestId": "210173a317545459775223930e45d9"
+      }
+    },
+    "resCode": 200,
+    "resMessage": "success",
+    "code": "0",
+    "request_id": "2101026117545459775258252",
+    "_trace_id_": "210173a317545459775223930e45d9"
+  },
+  "detailed_info": {
+    "text_areas": [
+      {
+        "content": "波光粼粼",
+        "fontsize": 26,
+        "lineCount": 1,
+        "horizontalLayout": "center",
+        "verticalLayout": "center",
+        "color": "#000000",
+        "texts": [
+          {
+            "value": "Glistening Waves",
+            "language": "en",
+            "fontsize": 14,
+            "color": "#000000",
+            "valid": true,
+            "lineCount": 1,
+            "trans_model_name": "MarcoVL2-8B-PicTrans",
+            "imageRect": {
+              "top": 617,
+              "left": 313,
+              "width": 100,
+              "degree": 0,
+              "height": 43
+            },
+            "textRect": {
+              "top": 626,
+              "left": 304,
+              "width": 118,
+              "degree": 0,
+              "height": 26
+            }
+          }
+        ]
+      },
+      {
+        "content": "D款",
+        "fontsize": 30,
+        "lineCount": 1,
+        "horizontalLayout": "center",
+        "verticalLayout": "center",
+        "color": "#000000",
+        "texts": [
+          {
+            "value": "Style D",
+            "language": "en",
+            "fontsize": 13,
+            "color": "#000000",
+            "valid": true,
+            "lineCount": 1,
+            "trans_model_name": "MarcoVL2-8B-PicTrans",
+            "imageRect": {
+              "top": 615,
+              "left": 442,
+              "width": 57,
+              "degree": 0,
+              "height": 49
+            },
+            "textRect": {
+              "top": 625,
+              "left": 449,
+              "width": 44,
+              "degree": 0,
+              "height": 30
+            }
+          }
+        ]
+      },
+      {
+        "content": "注意：框色须自选本图仅作参考",
+        "fontsize": 19,
+        "lineCount": 1,
+        "horizontalLayout": "center",
+        "verticalLayout": "center",
+        "color": "#000000",
+        "texts": [
+          {
+            "value": "Note: Frame color must be selected separately. This image is for reference only.",
+            "language": "en",
+            "fontsize": 19,
+            "color": "#000000",
+            "valid": true,
+            "lineCount": 1,
+            "trans_model_name": "MarcoVL2-8B-PicTrans",
+            "imageRect": {
+              "top": 691,
+              "left": 262,
+              "width": 277,
+              "degree": 0,
+              "height": 32
+            },
+            "textRect": {
+              "top": 698,
+              "left": 14,
+              "width": 774,
+              "degree": 0,
+              "height": 18
+            }
+          }
+        ]
+      }
+    ],
+    "fonts": [
+      "AlibabaSans-Regular"
+    ],
+    "colors": [
+      "#000000"
+    ],
+    "text_positions": [
+      {
+        "text": "Glistening Waves",
+        "position": {
+          "top": 617,
+          "left": 313,
+          "width": 100,
+          "degree": 0,
+          "height": 43
+        },
+        "language": "en",
+        "fontsize": 14
+      },
+      {
+        "text": "Style D",
+        "position": {
+          "top": 615,
+          "left": 442,
+          "width": 57,
+          "degree": 0,
+          "height": 49
+        },
+        "language": "en",
+        "fontsize": 13
+      },
+      {
+        "text": "Note: Frame color must be selected separately. This image is for reference only.",
+        "position": {
+          "top": 691,
+          "left": 262,
+          "width": 277,
+          "degree": 0,
+          "height": 32
+        },
+        "language": "en",
+        "fontsize": 19
+      }
+    ],
+    "translation_summary": {
+      "total_text_areas": 3,
+      "total_texts": 3,
+      "languages_detected": [
+        "en"
+      ],
+      "fonts_used": 1,
+      "colors_used": 1
+    }
+  }
+}
