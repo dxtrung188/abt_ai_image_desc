@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Translation - Aidge API</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        .content {
+            padding: 40px;
+        }
+        .upload-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 2px dashed #dee2e6;
+            transition: all 0.3s ease;
+        }
+        .upload-section:hover {
+            border-color: #667eea;
+            background: #f0f2ff;
+        }
+        .upload-form {
+            text-align: center;
+        }
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            margin: 20px 0;
+        }
+        .file-input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        .file-input-label {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        .file-input-label:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        .language-selector {
+            margin: 20px 0;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .language-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .language-group label {
+            font-weight: 600;
+            color: #495057;
+        }
+        select {
+            padding: 10px 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            transition: border-color 0.3s ease;
+        }
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .submit-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
+        }
+        .submit-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .result-section {
+            margin-top: 30px;
+            display: none;
+        }
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        .image-container {
+            text-align: center;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        .image-container h3 {
+            margin: 0 0 15px 0;
+            color: #495057;
+        }
+        .image-container img {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid #f5c6cb;
+        }
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid #c3e6cb;
+        }
+        .file-info {
+            margin: 10px 0;
+            padding: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        @media (max-width: 768px) {
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+            .language-selector {
+                flex-direction: column;
+                align-items: center;
+            }
+            .content {
+                padding: 20px;
+            }
+            nav > div {
+                flex-direction: column;
+                gap: 10px;
+            }
+            nav > div > div:last-child {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Menu -->
+    <nav style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 15px 0; margin-bottom: 20px;">
+        <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px;">
+            <div style="color: white; font-size: 20px; font-weight: bold;">
+                🏠 ABT AI Image Desc
+            </div>
+            <div style="display: flex; gap: 20px;">
+                <a href="/" style="color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; transition: background 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='transparent'">
+                    📊 Dashboard
+                </a>
+                <a href="/image_translation" style="color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; transition: background 0.3s; background: rgba(255,255,255,0.2);" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+                    🖼️ Image Translation
+                </a>
+                <a href="/analyze_image" style="color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; transition: background 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='transparent'">
+                    🤖 AI Analysis
+                </a>
+                <a href="/filter_history" style="color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; transition: background 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='transparent'">
+                    📈 History
+                </a>
+                <a href="/admin" style="color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; transition: background 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='transparent'">
+                    ⚙️ Admin
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>🖼️ Image Translation</h1>
+            <p>Sử dụng Aidge API để dịch văn bản trong ảnh</p>
+        </div>
+        
+        <div class="content">
+            <div class="upload-section">
+                <form class="upload-form" id="uploadForm">
+                    <h2>Upload Ảnh</h2>
+                    <p>Chọn ảnh chứa văn bản cần dịch</p>
+                    
+                    <div class="file-input-wrapper">
+                        <input type="file" id="imageFile" class="file-input" accept="image/*" required>
+                        <label for="imageFile" class="file-input-label">
+                            📁 Chọn ảnh
+                        </label>
+                    </div>
+                    
+                    <div id="fileInfo" class="file-info" style="display: none;"></div>
+                    
+                    <div class="language-selector">
+                        <div class="language-group">
+                            <label for="sourceLanguage">Ngôn ngữ nguồn:</label>
+                            <select id="sourceLanguage" name="sourceLanguage">
+                                <option value="auto">Tự động nhận diện</option>
+                                <option value="zh">Tiếng Trung (Giản thể)</option>
+                                <option value="en">Tiếng Anh</option>
+                                <option value="fr">Tiếng Pháp</option>
+                                <option value="it">Tiếng Ý</option>
+                                <option value="ja">Tiếng Nhật</option>
+                                <option value="ko">Tiếng Hàn</option>
+                                <option value="pt">Tiếng Bồ Đào Nha</option>
+                                <option value="es">Tiếng Tây Ban Nha</option>
+                                <option value="tr">Tiếng Thổ Nhĩ Kỳ</option>
+                            </select>
+                        </div>
+                        
+                        <div class="language-group">
+                            <label for="targetLanguage">Ngôn ngữ đích:</label>
+                            <select id="targetLanguage" name="targetLanguage">
+                                <option value="en">Tiếng Anh</option>
+                                <option value="zh">Tiếng Trung (Giản thể)</option>
+                                <option value="ar">Tiếng Ả Rập</option>
+                                <option value="bn">Tiếng Bengali</option>
+                                <option value="cs">Tiếng Séc</option>
+                                <option value="nl">Tiếng Hà Lan</option>
+                                <option value="fr">Tiếng Pháp</option>
+                                <option value="de">Tiếng Đức</option>
+                                <option value="el">Tiếng Hy Lạp</option>
+                                <option value="he">Tiếng Hebrew</option>
+                                <option value="hu">Tiếng Hungary</option>
+                                <option value="id">Tiếng Indonesia</option>
+                                <option value="it">Tiếng Ý</option>
+                                <option value="ja">Tiếng Nhật</option>
+                                <option value="kk">Tiếng Kazakhstan</option>
+                                <option value="ko">Tiếng Hàn</option>
+                                <option value="ms">Tiếng Malay</option>
+                                <option value="pl">Tiếng Ba Lan</option>
+                                <option value="pt">Tiếng Bồ Đào Nha</option>
+                                <option value="ru">Tiếng Nga</option>
+                                <option value="es">Tiếng Tây Ban Nha</option>
+                                <option value="th">Tiếng Thái</option>
+                                <option value="tr">Tiếng Thổ Nhĩ Kỳ</option>
+                                <option value="uk">Tiếng Ukraine</option>
+                                <option value="ur">Tiếng Urdu</option>
+                                <option value="vi">Tiếng Việt</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        🚀 Dịch Ảnh
+                    </button>
+                </form>
+            </div>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Đang xử lý ảnh...</p>
+            </div>
+            
+            <div class="result-section" id="resultSection">
+                <h2>Kết Quả Dịch</h2>
+                <div class="result-grid" id="resultGrid">
+                    <!-- Kết quả sẽ được hiển thị ở đây -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('uploadForm');
+            const fileInput = document.getElementById('imageFile');
+            const fileInfo = document.getElementById('fileInfo');
+            const loading = document.getElementById('loading');
+            const submitBtn = document.getElementById('submitBtn');
+            const resultSection = document.getElementById('resultSection');
+            const resultGrid = document.getElementById('resultGrid');
+
+            // Hiển thị thông tin file khi chọn
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    fileInfo.style.display = 'block';
+                    fileInfo.innerHTML = `
+                        <strong>Tên file:</strong> ${file.name}<br>
+                        <strong>Kích thước:</strong> ${(file.size / 1024 / 1024).toFixed(2)} MB<br>
+                        <strong>Loại file:</strong> ${file.type}
+                    `;
+                } else {
+                    fileInfo.style.display = 'none';
+                }
+            });
+
+            // Xử lý submit form
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const file = fileInput.files[0];
+                if (!file) {
+                    alert('Vui lòng chọn một ảnh');
+                    return;
+                }
+
+                const sourceLanguage = document.getElementById('sourceLanguage').value;
+                const targetLanguage = document.getElementById('targetLanguage').value;
+
+                // Hiển thị loading
+                loading.style.display = 'block';
+                submitBtn.disabled = true;
+                resultSection.style.display = 'none';
+
+                try {
+                    const formData = new FormData();
+                    formData.append('image', file);
+                    formData.append('source_language', sourceLanguage);
+                    formData.append('target_language', targetLanguage);
+
+                    const response = await fetch('/translate_image', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        // Hiển thị kết quả
+                        resultGrid.innerHTML = `
+                            <div class="image-container">
+                                <h3>Ảnh Gốc</h3>
+                                <img src="${result.original_image_url}" alt="Ảnh gốc">
+                            </div>
+                            <div class="image-container">
+                                <h3>Ảnh Đã Dịch</h3>
+                                <img src="${result.translated_image_url}" alt="Ảnh đã dịch">
+                            </div>
+                        `;
+                        resultSection.style.display = 'block';
+                    } else {
+                        alert('Lỗi: ' + result.message);
+                    }
+                } catch (error) {
+                    console.error('Lỗi:', error);
+                    alert('Có lỗi xảy ra khi xử lý ảnh');
+                } finally {
+                    loading.style.display = 'none';
+                    submitBtn.disabled = false;
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

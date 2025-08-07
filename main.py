@@ -11,6 +11,10 @@ import openai
 import base64
 from glob import glob
 import aiohttp
+import hmac
+import hashlib
+import time
+import asyncio
 from utils import (
     log_message, download_image_from_url, encode_image_base64, clean_json_response, extract_estimate_from_response, analyze_image_openai_json,
     get_candidates_info, get_next_image_to_label, get_batch_images_for_label
@@ -30,6 +34,7 @@ app = FastAPI()
 
 # Mount static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static/translated_images", StaticFiles(directory="translated_images"), name="translated_images")
 
 # Jinja2 templates
 templates = Jinja2Templates(directory="templates")
@@ -44,6 +49,10 @@ DB_USER = os.getenv("POSTGRES_USER")
 DB_PASSWORD = os.getenv("POSTGRES_PASSWORD")
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+AIDGE_ACCESS_KEY = os.getenv("AIDGE_ACCESS_KEY", "508912")
+AIDGE_ACCESS_SECRET = os.getenv("AIDGE_ACCESS_SECRET", "LvtYlmGSEglYZX5KsaBXI3HHXBPc0jYU")
+AIDGE_API_DOMAIN = os.getenv("AIDGE_API_DOMAIN", "api.aidc-ai.com")
+
 if not all([DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD, OPENAI_API_KEY]):
     raise RuntimeError("Missing one or more required environment variables: POSTGRES_HOST, POSTGRES_PORT, POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD, OPENAI_API_KEY")
 openai.api_key = OPENAI_API_KEY
@@ -117,6 +126,63 @@ Một ảnh nội thất (bạn sẽ nhận được ảnh sản phẩm kèm the
 '''
 
 IMAGES_DIR = "images"
+TRANSLATED_IMAGES_DIR = "translated_images"
+
+def generate_aidge_signature(access_key_secret: str, timestamp: str) -> str:
+    """Tạo chữ ký cho Aidge API"""
+    h = hmac.new(access_key_secret.encode('utf-8'), 
+                 (access_key_secret + timestamp).encode('utf-8'), 
+                 hashlib.sha256)
+    return h.hexdigest().upper()
+
+async def call_aidge_image_translation(image_url: str, source_language: str, target_language: str) -> dict:
+    """Gọi Aidge Image Translation API - sử dụng translation_mllm API"""
+    try:
+        # Tạo timestamp
+        timestamp = str(int(time.time() * 1000))
+        
+        # Tạo chữ ký
+        sign = generate_aidge_signature(AIDGE_ACCESS_SECRET, timestamp)
+        
+        # URL API - sử dụng translation_mllm API (synchronous)
+        api_name = "ai/image/translation_mllm"
+        url = f"https://{AIDGE_API_DOMAIN}/rest/{api_name}?partner_id=aidge&sign_method=sha256&sign_ver=v2&app_key={AIDGE_ACCESS_KEY}&timestamp={timestamp}&sign={sign}"
+        
+    
+
+        # Headers
+        headers = {
+            "Content-Type": "application/json",
+            "x-iop-trial": "true"  # Xóa tag này sau khi mua API
+        }
+        
+        # Data - theo documentation của translation_mllm API
+        data = {
+            "paramJson": {
+                "imageUrl": image_url,
+                "sourceLanguage": source_language,
+                "targetLanguage": target_language
+            }
+        }
+        
+        print(f"🔍 DEBUG: Calling Aidge API with URL: {image_url}")
+        print(f"🔍 DEBUG: API URL: {url}")
+        print(f"🔍 DEBUG: Data: {data}")
+        
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url, json=data, headers=headers) as response:
+                result = await response.json()
+                print(f"🔍 DEBUG: Response status: {response.status}")
+                print(f"🔍 DEBUG: Response: {result}")
+                return result
+                
+    except Exception as e:
+        print(f"🔍 DEBUG: Exception in call_aidge_image_translation: {e}")
+        import traceback
+        traceback.print_exc()
+        return {"error": str(e)}
+
+
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request, edit_id: int = None):
@@ -399,6 +465,118 @@ async def api_filter_history(user: str = None):
                 "offer_id": offer_id
             })
         return JSONResponse(result) 
+
+@app.get("/image_translation", response_class=HTMLResponse)
+async def image_translation_page(request: Request):
+    """Trang image translation"""
+    return templates.TemplateResponse("image_translation.html", {"request": request})
+
+@app.post("/translate_image")
+async def translate_image(
+    image: UploadFile = Form(...),
+    source_language: str = Form(...),
+    target_language: str = Form(...)
+):
+    """API endpoint để dịch ảnh - sử dụng translation_mllm API"""
+    try:
+        # Kiểm tra file
+        if not image.filename:
+            return JSONResponse({"success": False, "message": "Không có file được upload"})
+        
+        # Tạo tên file unique
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        original_filename = image.filename
+        file_extension = os.path.splitext(original_filename)[1]
+        unique_filename = f"original_{timestamp}{file_extension}"
+        
+        # Lưu file gốc
+        original_path = os.path.join(TRANSLATED_IMAGES_DIR, unique_filename)
+        os.makedirs(TRANSLATED_IMAGES_DIR, exist_ok=True)
+        
+        with open(original_path, "wb") as f:
+            content = await image.read()
+            f.write(content)
+        
+        # Tạo URL cho file (giả sử server có thể serve static files)
+        original_url = f"/static/translated_images/{unique_filename}"
+        
+        # Upload file lên một service để có URL public (hoặc sử dụng local server)
+        # Ở đây tôi sẽ giả định file được serve qua static files
+        image_url = f"http://localhost:8000{original_url}"
+        
+        # Gọi Aidge API - translation_mllm là synchronous
+        print(f"🔍 DEBUG: Calling Aidge API with image_url: {image_url}")
+        result = await call_aidge_image_translation(image_url, source_language, target_language)
+        
+        print(f"🔍 DEBUG: Aidge API result: {result}")
+        
+        if "error" in result:
+            print(f"🔍 DEBUG: API error: {result['error']}")
+            return JSONResponse({"success": False, "message": f"Lỗi API: {result['error']}"})
+        
+        # Kiểm tra response code
+        res_code = result.get("resCode")
+        print(f"🔍 DEBUG: Response code: {res_code}")
+        
+        if res_code != 200:
+            error_message = result.get("resMessage", "Unknown error")
+            print(f"🔍 DEBUG: API Error: {error_message}")
+            return JSONResponse({"success": False, "message": f"API Error: {error_message}"})
+        
+        # Xử lý response từ translation_mllm API
+        data = result.get("data", {})
+        
+        # Lấy URL ảnh đã dịch từ response structure
+        # Theo sample response: data.result.data.structData.message[0].result_list[0].fileUrl
+        translated_image_url = None
+        
+        # Thử lấy từ result_list trước
+        result_list = data.get("result", {}).get("data", {}).get("structData", {}).get("message", [{}])[0].get("result_list", [])
+        if result_list:
+            translated_image_url = result_list[0].get("fileUrl")
+        
+        # Nếu không có trong result_list, thử lấy từ repairedUrl
+        if not translated_image_url:
+            repaired_url = data.get("result", {}).get("data", {}).get("structData", {}).get("message", [{}])[0].get("edit_info", {}).get("repairedUrl")
+            if repaired_url:
+                translated_image_url = repaired_url
+        
+        # Nếu vẫn không có, thử lấy từ imageResultList
+        if not translated_image_url:
+            image_result_list = data.get("imageResultList", [])
+            if image_result_list:
+                result_list = image_result_list[0].get("result_list", [])
+                if result_list:
+                    translated_image_url = result_list[0].get("fileUrl")
+        
+        if not translated_image_url:
+            return JSONResponse({"success": False, "message": "Không tìm thấy URL ảnh đã dịch trong response"})
+        
+        # Download ảnh đã dịch
+        translated_filename = f"translated_{timestamp}{file_extension}"
+        translated_path = os.path.join(TRANSLATED_IMAGES_DIR, translated_filename)
+        
+        # Download ảnh từ URL
+        async with aiohttp.ClientSession() as session:
+            async with session.get(translated_image_url) as response:
+                if response.status == 200:
+                    translated_content = await response.read()
+                    with open(translated_path, "wb") as f:
+                        f.write(translated_content)
+                    
+                    translated_url = f"/static/translated_images/{translated_filename}"
+                    
+                    return JSONResponse({
+                        "success": True,
+                        "original_image_url": original_url,
+                        "translated_image_url": translated_url,
+                        "message": "Dịch ảnh thành công"
+                    })
+                else:
+                    return JSONResponse({"success": False, "message": "Không thể download ảnh đã dịch"})
+        
+    except Exception as e:
+        return JSONResponse({"success": False, "message": f"Lỗi xử lý: {str(e)}"})
 
 @app.get("/admin", response_class=HTMLResponse)
 async def admin_page(request: Request):

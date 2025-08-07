@@ -5,7 +5,7 @@
     <title>ABT AI Image Desc</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { margin: 0; font-family: Arial, sans-serif; background: #f8f9fa; }
+        body { margin: 0; font-family: Arial, sans-serif; background: #f8f9fa; padding-top: 0; }
         .container { display: flex; flex-wrap: wrap; gap: 24px; justify-content: center; align-items: flex-start; padding: 24px 8px; }
         .left, .right { background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); padding: 20px; flex: 1 1 320px; min-width: 280px; max-width: 480px; }
         .left { display: flex; flex-direction: column; align-items: center; margin-bottom: 24px; }
@@ -44,6 +44,16 @@
         .submit-btn:hover:enabled { background: #0056b3; }
         @media (max-width: 900px) { .container { flex-direction: column; align-items: stretch; } .left, .right { max-width: 100%; } .submit-row { flex-direction: column; gap: 8px; } }
         @media (max-width: 600px) { .candidates-grid { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); } .left img, .preview-block img { max-height: 180px; } .user-input-block input { font-size: 16px; padding: 12px 10px; } .submit-btn { font-size: 16px; padding: 12px 18px; } }
+        @media (max-width: 768px) {
+            nav > div {
+                flex-direction: column;
+                gap: 10px;
+            }
+            nav > div > div:last-child {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
         .dashboard-table {
             width: 100%;
             border-collapse: collapse;
@@ -183,6 +193,32 @@
     </script>
 </head>
 <body>
+    <!-- Navigation Menu -->
+    <nav style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 15px 0; margin-bottom: 20px;">
+        <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px;">
+            <div style="color: white; font-size: 20px; font-weight: bold;">
+                🏠 ABT AI Image Desc
+            </div>
+            <div style="display: flex; gap: 20px;">
+                <a href="/" style="color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; transition: background 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='transparent'">
+                    📊 Dashboard
+                </a>
+                <a href="/image_translation" style="color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; transition: background 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='transparent'">
+                    🖼️ Image Translation
+                </a>
+                <a href="/analyze_image" style="color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; transition: background 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='transparent'">
+                    🤖 AI Analysis
+                </a>
+                <a href="/filter_history" style="color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; transition: background 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='transparent'">
+                    📈 History
+                </a>
+                <a href="/admin" style="color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; transition: background 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='transparent'">
+                    ⚙️ Admin
+                </a>
+            </div>
+        </div>
+    </nav>
+
     {% if done %}
         <h2 style="text-align:center; margin-top: 48px;">Đã hoàn thành tất cả dữ liệu cần xử lý!</h2>
     {% else %}

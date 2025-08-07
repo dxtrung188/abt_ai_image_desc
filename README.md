@@ -4,7 +4,14 @@
 
 ### Mục đích
 
-Xây dựng một website cho phép người dùng chọn sản phẩm trong danh sách lọc (candidates) giống nhất với sản phẩm gốc dựa trên hình ảnh.
+Xây dựng một website cho phép người dùng chọn sản phẩm trong danh sách lọc (candidates) giống nhất với sản phẩm gốc dựa trên hình ảnh, và dịch văn bản trong ảnh sang ngôn ngữ khác.
+
+### Tính năng chính
+
+1. **Product Matching**: Chọn sản phẩm giống nhất từ danh sách candidates
+2. **Image Translation**: Dịch văn bản trong ảnh sang ngôn ngữ khác sử dụng Aidge API
+3. **AI Analysis**: Phân tích ảnh sản phẩm bằng OpenAI
+4. **History & Admin**: Quản lý lịch sử và admin panel
 
 ---
 
@@ -68,5 +75,39 @@ Xây dựng một website cho phép người dùng chọn sản phẩm trong dan
 - Đảm bảo dữ liệu được cập nhật chính xác vào trường `best_match`.
 - Có thể thêm chức năng lọc, tìm kiếm, hoặc phân trang nếu số lượng dòng lớn.
 - Giao diện nên trực quan, dễ thao tác, ưu tiên hiển thị rõ ràng ảnh sản phẩm.
+
+---
+
+## Image Translation Feature
+
+### Tổng quan
+
+Tính năng Image Translation cho phép người dùng upload ảnh và sử dụng Aidge API để dịch văn bản trong ảnh sang ngôn ngữ khác.
+
+### Cách sử dụng
+
+1. **Truy cập**: Vào menu "🖼️ Image Translation" hoặc truy cập `/image_translation`
+2. **Upload ảnh**: Chọn file ảnh từ máy tính
+3. **Chọn ngôn ngữ**: Chọn ngôn ngữ nguồn và đích
+4. **Dịch ảnh**: Click "🚀 Dịch Ảnh" và chờ kết quả
+5. **Xem kết quả**: So sánh ảnh gốc và ảnh đã dịch
+
+### Cấu hình API
+
+Thêm vào file `.env`:
+```env
+AIDGE_ACCESS_KEY=508912
+AIDGE_ACCESS_SECRET=LvtYlmGSEglYZX5KsaBXI3HHXBPc0jYU
+AIDGE_API_DOMAIN=api.aidc-ai.com
+```
+
+### Chi tiết kỹ thuật
+
+- **API**: Sử dụng Aidge Image Translation Pro Version
+- **Storage**: Ảnh được lưu trong thư mục `translated_images/`
+- **Timeout**: 60 giây cho mỗi request
+- **Formats**: Hỗ trợ JPG, PNG, GIF, BMP, etc.
+
+Xem chi tiết tại: [IMAGE_TRANSLATION_README.md](IMAGE_TRANSLATION_README.md)
 
 ---

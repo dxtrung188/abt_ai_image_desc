@@ -1,0 +1,14 @@
+# Database Configuration
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_DB=your_database_name
+POSTGRES_USER=your_username
+POSTGRES_PASSWORD=your_password
+
+# OpenAI Configuration
+OPENAI_API_KEY=your_openai_api_key
+
+# Aidge API Configuration
+AIDGE_ACCESS_KEY=508912
+AIDGE_ACCESS_SECRET=LvtYlmGSEglYZX5KsaBXI3HHXBPc0jYU
+AIDGE_API_DOMAIN=api.aidc-ai.com 
