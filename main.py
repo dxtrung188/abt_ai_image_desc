@@ -167,6 +167,7 @@ async def fetch_and_save_image(image_url: str, dest_path: str, max_retries: int 
         "Cache-Control": "no-cache",
         "Pragma": "no-cache",
     }
+    
     if referer:
         headers["Referer"] = referer
 
@@ -820,7 +821,7 @@ async def api_admin_users():
             SELECT DISTINCT best_match->>'user' as user 
             FROM abt_image_to_products_1688 
             WHERE best_match IS NOT NULL AND best_match->>'user' IS NOT NULL
-            ORDER BY user
+            ORDER BY best_match->>'user'
         """)
         return JSONResponse([row["user"] for row in rows])
 
@@ -870,14 +871,37 @@ async def api_admin_filtered_products(
             ORDER BY id DESC
         """
         
-        rows = await conn.fetch(data_query, *params)
+        try:
+            rows = await conn.fetch(data_query, *params)
+        except Exception as e:
+            print(f"Lỗi query database: {e}")
+            return JSONResponse({
+                "products": [],
+                "total": 0,
+                "error": f"Database error: {str(e)}"
+            })
         
         # Xử lý dữ liệu
         products = []
         for row in rows:
             try:
-                best_match = json.loads(row["best_match"]) if row["best_match"] else {}
-                verify_result = json.loads(row["verify_result"]) if row["verify_result"] else None
+                # Parse best_match JSON
+                best_match = {}
+                if row["best_match"]:
+                    try:
+                        best_match = json.loads(row["best_match"])
+                    except (json.JSONDecodeError, TypeError) as e:
+                        print(f"Lỗi parse best_match cho row {row['id']}: {e}")
+                        best_match = {}
+                
+                # Parse verify_result JSON
+                verify_result = None
+                if row["verify_result"]:
+                    try:
+                        verify_result = json.loads(row["verify_result"])
+                    except (json.JSONDecodeError, TypeError) as e:
+                        print(f"Lỗi parse verify_result cho row {row['id']}: {e}")
+                        verify_result = None
                 
                 # Lấy thông tin candidate
                 candidate_img = None
@@ -891,17 +915,21 @@ async def api_admin_filtered_products(
                             if candidate.get("offer_id") == offer_id:
                                 subject_trans = candidate.get("subject_trans")
                                 break
-                    except Exception:
+                    except (json.JSONDecodeError, TypeError) as e:
+                        print(f"Lỗi parse products_1688_filtered cho row {row['id']}: {e}")
                         pass
                 
                 # Lấy ảnh candidate
                 if best_match.get("offer_id"):
-                    cand_row = await conn.fetchrow(
-                        'SELECT image_url FROM abt_products_1688 WHERE offer_id = $1', 
-                        str(best_match["offer_id"])
-                    )
-                    if cand_row:
-                        candidate_img = cand_row["image_url"]
+                    try:
+                        cand_row = await conn.fetchrow(
+                            'SELECT image_url FROM abt_products_1688 WHERE offer_id = $1', 
+                            str(best_match["offer_id"])
+                        )
+                        if cand_row:
+                            candidate_img = cand_row["image_url"]
+                    except Exception as e:
+                        print(f"Lỗi lấy candidate image cho row {row['id']}: {e}")
                 
                 products.append({
                     "id": row["id"],

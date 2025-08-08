@@ -79,9 +79,115 @@
         .detail-label { font-weight: 600; min-width: 150px; color: #495057; }
         .detail-value { color: #666; }
         
-
-        
         .loading { text-align: center; padding: 40px; color: #666; }
+        .no-data { text-align: center; padding: 60px 20px; color: #666; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .no-data h3 { margin: 0 0 15px 0; color: #333; }
+        .no-data p { margin: 0; font-size: 16px; }
+        .filter-notice { background: #e7f3ff; border: 1px solid #b3d9ff; border-radius: 6px; padding: 15px; margin-bottom: 20px; }
+        .filter-notice h4 { margin: 0 0 10px 0; color: #0056b3; }
+        .filter-notice p { margin: 0; color: #333; }
+        
+        .filtered-summary { 
+            background: #fff; 
+            border-radius: 8px; 
+            margin-bottom: 20px; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+            padding: 20px; 
+            display: none; 
+        }
+        .filtered-summary h3 { margin: 0 0 15px 0; color: #333; border-bottom: 2px solid #007bff; padding-bottom: 8px; }
+        .filtered-summary-stats { display: flex; gap: 20px; flex-wrap: wrap; }
+        .filtered-stat-item { 
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); 
+            padding: 15px 20px; 
+            border-radius: 8px; 
+            border-left: 4px solid #007bff;
+            min-width: 150px;
+        }
+        .filtered-stat-item.pending { border-left-color: #ffc107; }
+        .filtered-stat-item.pass { border-left-color: #28a745; }
+        .filtered-stat-item.fail { border-left-color: #dc3545; }
+        .filtered-stat-item .number { font-size: 28px; font-weight: bold; color: #333; }
+        .filtered-stat-item .label { font-size: 14px; color: #666; margin-top: 5px; }
+        .filtered-stat-item.pending .number { color: #856404; }
+        .filtered-stat-item.pass .number { color: #155724; }
+        .filtered-stat-item.fail .number { color: #721c24; }
+        
+        /* Pagination styles */
+        .pagination-container {
+            background: #fff;
+            border-radius: 8px;
+            margin: 20px 0;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: none;
+        }
+        .pagination-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .pagination-info .showing-info {
+            color: #666;
+            font-size: 14px;
+        }
+        .pagination-info .total-info {
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .pagination-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .pagination-btn {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            background: #fff;
+            color: #333;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            min-width: 40px;
+            text-align: center;
+        }
+        .pagination-btn:hover:not(:disabled) {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        .pagination-btn.active {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .pagination-btn.prev, .pagination-btn.next {
+            font-weight: bold;
+        }
+        .page-numbers {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+        .page-numbers .pagination-btn {
+            min-width: 35px;
+        }
+        .pagination-ellipsis {
+            padding: 8px 4px;
+            color: #666;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -108,6 +214,11 @@
             </div>
         </div>
         
+        <div class="filter-notice">
+            <h4>📋 Hướng dẫn sử dụng</h4>
+            <p>Vui lòng chọn các bộ lọc bên dưới và nhấn nút "Lọc" để xem dữ liệu. Mặc định trang sẽ không hiển thị dữ liệu cho đến khi bạn thực hiện lọc.</p>
+        </div>
+        
         <div class="filters">
             <div class="filter-row">
                 <label>Trạng thái:</label>
@@ -129,12 +240,55 @@
                 <label>Đến ngày:</label>
                 <input type="date" id="date-to">
                 
-                <button onclick="loadProducts()">Lọc</button>
+                <button onclick="loadProducts()">🔍 Lọc</button>
+            </div>
+        </div>
+        
+        <div id="filtered-summary" class="filtered-summary">
+            <h3>📊 Tóm tắt kết quả lọc</h3>
+            <div class="filtered-summary-stats">
+                <div class="filtered-stat-item pending">
+                    <div class="number" id="filtered-pending-count">0</div>
+                    <div class="label">Chưa verify</div>
+                </div>
+                <div class="filtered-stat-item pass">
+                    <div class="number" id="filtered-pass-count">0</div>
+                    <div class="label">Đạt</div>
+                </div>
+                <div class="filtered-stat-item fail">
+                    <div class="number" id="filtered-fail-count">0</div>
+                    <div class="label">Không đạt</div>
+                </div>
+                <div class="filtered-stat-item">
+                    <div class="number" id="filtered-total-count">0</div>
+                    <div class="label">Tổng số</div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="pagination-container" class="pagination-container">
+            <div class="pagination-info">
+                <div class="showing-info">
+                    Hiển thị <span id="showing-start">0</span> - <span id="showing-end">0</span> của <span id="showing-total">0</span> kết quả
+                </div>
+                <div class="total-info">
+                    Trang <span id="current-page">1</span> / <span id="total-pages">1</span>
+                </div>
+            </div>
+            <div class="pagination-controls">
+                <button class="pagination-btn prev" onclick="changePage('prev')" disabled>‹ Trước</button>
+                <div class="page-numbers" id="page-numbers">
+                    <!-- Page numbers will be generated here -->
+                </div>
+                <button class="pagination-btn next" onclick="changePage('next')" disabled>Tiếp ›</button>
             </div>
         </div>
         
         <div id="products-container">
-            <div class="loading">Đang tải...</div>
+            <div class="no-data">
+                <h3>📊 Chưa có dữ liệu được hiển thị</h3>
+                <p>Vui lòng chọn các bộ lọc và nhấn nút "Lọc" để xem dữ liệu sản phẩm đã filter.</p>
+            </div>
         </div>
         
 
@@ -152,6 +306,12 @@
     </div>
     
     <script>
+        
+        // Pagination variables
+        let currentPage = 1;
+        let itemsPerPage = 50;
+        let allProducts = [];
+        let totalPages = 1;
         
         // Load thống kê
         async function loadStats() {
@@ -185,9 +345,12 @@
         }
         
         // Load sản phẩm
-        async function loadProducts() {
+        async function loadProducts(page = 1) {
             let container = document.getElementById('products-container');
-            container.innerHTML = '<div class="loading">Đang tải...</div>';
+            container.innerHTML = '<div class="loading">🔄 Đang tải dữ liệu...</div>';
+            
+            // Reset pagination
+            currentPage = page;
             
             let status = document.getElementById('status-filter').value;
             let user = document.getElementById('user-filter').value;
@@ -205,23 +368,65 @@
                 let resp = await fetch(`/api/admin_filtered_products?${params}`);
                 let data = await resp.json();
                 
-                renderProducts(data.products);
+                allProducts = data.products || [];
+                totalPages = Math.ceil(allProducts.length / itemsPerPage);
+                
+                renderProducts();
+                renderPagination();
             } catch (error) {
                 console.error('Lỗi load products:', error);
-                container.innerHTML = '<div class="loading">Lỗi tải dữ liệu</div>';
+                container.innerHTML = '<div class="loading">❌ Lỗi tải dữ liệu</div>';
             }
         }
         
         // Render sản phẩm
-        function renderProducts(products) {
+        function renderProducts() {
             let container = document.getElementById('products-container');
-            if (products.length === 0) {
-                container.innerHTML = '<div class="loading">Không có dữ liệu</div>';
+            let summaryContainer = document.getElementById('filtered-summary');
+            let paginationContainer = document.getElementById('pagination-container');
+            
+            if (allProducts.length === 0) {
+                container.innerHTML = `
+                    <div class="no-data">
+                        <h3>📭 Không tìm thấy dữ liệu</h3>
+                        <p>Không có sản phẩm nào phù hợp với bộ lọc đã chọn. Vui lòng thử điều chỉnh các bộ lọc khác.</p>
+                    </div>
+                `;
+                // Hide summary and pagination when no data
+                summaryContainer.style.display = 'none';
+                paginationContainer.style.display = 'none';
                 return;
             }
             
+            // Calculate pagination
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const currentProducts = allProducts.slice(startIndex, endIndex);
+            
+            // Calculate summary statistics for all products
+            let pendingCount = 0;
+            let passCount = 0;
+            let failCount = 0;
+            
+            allProducts.forEach(product => {
+                if (!product.verify_result) {
+                    pendingCount++;
+                } else if (product.verify_result.result === 'pass') {
+                    passCount++;
+                } else if (product.verify_result.result === 'fail') {
+                    failCount++;
+                }
+            });
+            
+            // Update and show summary
+            document.getElementById('filtered-pending-count').textContent = pendingCount;
+            document.getElementById('filtered-pass-count').textContent = passCount;
+            document.getElementById('filtered-fail-count').textContent = failCount;
+            document.getElementById('filtered-total-count').textContent = allProducts.length;
+            summaryContainer.style.display = 'block';
+            
             let html = '<div class="products-grid">';
-            products.forEach(product => {
+            currentProducts.forEach(product => {
                 let statusClass = '';
                 let statusText = 'Chưa verify';
                 if (product.verify_result) {
@@ -267,7 +472,95 @@
             container.innerHTML = html;
         }
         
-
+        // Render pagination controls
+        function renderPagination() {
+            const paginationContainer = document.getElementById('pagination-container');
+            const pageNumbersContainer = document.getElementById('page-numbers');
+            
+            if (allProducts.length === 0 || totalPages <= 1) {
+                paginationContainer.style.display = 'none';
+                return;
+            }
+            
+            paginationContainer.style.display = 'block';
+            
+            // Update pagination info
+            const startIndex = (currentPage - 1) * itemsPerPage + 1;
+            const endIndex = Math.min(currentPage * itemsPerPage, allProducts.length);
+            
+            document.getElementById('showing-start').textContent = startIndex;
+            document.getElementById('showing-end').textContent = endIndex;
+            document.getElementById('showing-total').textContent = allProducts.length;
+            document.getElementById('current-page').textContent = currentPage;
+            document.getElementById('total-pages').textContent = totalPages;
+            
+            // Update prev/next buttons
+            const prevBtn = document.querySelector('.pagination-btn.prev');
+            const nextBtn = document.querySelector('.pagination-btn.next');
+            
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+            
+            // Generate page numbers
+            let pageNumbersHtml = '';
+            const maxVisiblePages = 7;
+            
+            if (totalPages <= maxVisiblePages) {
+                // Show all pages if total pages <= maxVisiblePages
+                for (let i = 1; i <= totalPages; i++) {
+                    pageNumbersHtml += `<button class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+                }
+            } else {
+                // Show limited pages with ellipsis
+                if (currentPage <= 4) {
+                    // Show first 5 pages + ellipsis + last page
+                    for (let i = 1; i <= 5; i++) {
+                        pageNumbersHtml += `<button class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+                    }
+                    pageNumbersHtml += '<span class="pagination-ellipsis">...</span>';
+                    pageNumbersHtml += `<button class="pagination-btn" onclick="changePage(${totalPages})">${totalPages}</button>`;
+                } else if (currentPage >= totalPages - 3) {
+                    // Show first page + ellipsis + last 5 pages
+                    pageNumbersHtml += `<button class="pagination-btn" onclick="changePage(1)">1</button>`;
+                    pageNumbersHtml += '<span class="pagination-ellipsis">...</span>';
+                    for (let i = totalPages - 4; i <= totalPages; i++) {
+                        pageNumbersHtml += `<button class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+                    }
+                } else {
+                    // Show first page + ellipsis + current page and neighbors + ellipsis + last page
+                    pageNumbersHtml += `<button class="pagination-btn" onclick="changePage(1)">1</button>`;
+                    pageNumbersHtml += '<span class="pagination-ellipsis">...</span>';
+                    for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+                        pageNumbersHtml += `<button class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+                    }
+                    pageNumbersHtml += '<span class="pagination-ellipsis">...</span>';
+                    pageNumbersHtml += `<button class="pagination-btn" onclick="changePage(${totalPages})">${totalPages}</button>`;
+                }
+            }
+            
+            pageNumbersContainer.innerHTML = pageNumbersHtml;
+        }
+        
+        // Change page function
+        function changePage(page) {
+            if (page === 'prev') {
+                page = currentPage - 1;
+            } else if (page === 'next') {
+                page = currentPage + 1;
+            }
+            
+            if (page >= 1 && page <= totalPages && page !== currentPage) {
+                currentPage = page;
+                renderProducts();
+                renderPagination();
+                
+                // Scroll to top of products container
+                document.getElementById('products-container').scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }
+        }
         
         // Verify sản phẩm với AJAX
         async function verifyProduct(id, result) {
@@ -288,6 +581,10 @@
                     updateProductCard(id, result);
                     // Update stats
                     loadStats();
+                    // Update filtered summary
+                    updateFilteredSummary();
+                    // Re-render products to reflect changes
+                    renderProducts();
                 } else {
                     alert('Lỗi: ' + data.msg);
                     // Re-enable buttons on error
@@ -304,6 +601,16 @@
         
         // Update specific product card after verification
         function updateProductCard(id, result) {
+            // Update the product in allProducts array
+            const productIndex = allProducts.findIndex(p => p.id === id);
+            if (productIndex !== -1) {
+                allProducts[productIndex].verify_result = {
+                    result: result,
+                    timestamp: new Date().toISOString()
+                };
+            }
+            
+            // Update the specific product card in DOM
             const productCard = document.querySelector(`[data-product-id="${id}"]`);
             if (!productCard) return;
             
@@ -322,6 +629,31 @@
             // Remove verify buttons
             const verifyButtons = actionsDiv.querySelectorAll('.btn-pass, .btn-fail');
             verifyButtons.forEach(btn => btn.remove());
+        }
+        
+        // Update filtered summary based on current displayed products
+        function updateFilteredSummary() {
+            if (allProducts.length === 0) return;
+            
+            let pendingCount = 0;
+            let passCount = 0;
+            let failCount = 0;
+            
+            allProducts.forEach(product => {
+                if (!product.verify_result) {
+                    pendingCount++;
+                } else if (product.verify_result.result === 'pass') {
+                    passCount++;
+                } else if (product.verify_result.result === 'fail') {
+                    failCount++;
+                }
+            });
+            
+            // Update summary display
+            document.getElementById('filtered-pending-count').textContent = pendingCount;
+            document.getElementById('filtered-pass-count').textContent = passCount;
+            document.getElementById('filtered-fail-count').textContent = failCount;
+            document.getElementById('filtered-total-count').textContent = allProducts.length;
         }
         
         // Xem chi tiết
@@ -521,10 +853,10 @@
             return scoreMap[score] || `Điểm ${score}`;
         }
         
-        // Load dữ liệu ban đầu
+        // Load dữ liệu ban đầu - chỉ load stats và users, không load products
         loadStats();
         loadUsers();
-        loadProducts();
+        // Không gọi loadProducts() ở đây nữa
     </script>
 </body>
 </html> 
