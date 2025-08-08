@@ -15,10 +15,11 @@
         .stat-item .label { font-size: 12px; color: #666; }
         
         .filters { background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .filter-row { display: flex; gap: 15px; align-items: center; margin-bottom: 15px; }
-        .filter-row label { min-width: 120px; font-weight: 600; }
-        .filter-row select, .filter-row input { padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; }
-        .filter-row button { padding: 8px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .filter-row { display: flex; gap: 15px; align-items: center; margin-bottom: 15px; flex-wrap: wrap; }
+        .filter-row:last-child { margin-bottom: 0; }
+        .filter-row label { min-width: 100px; font-weight: 600; font-size: 14px; }
+        .filter-row select, .filter-row input { padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; flex: 1; min-width: 150px; }
+        .filter-row button { padding: 8px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600; min-width: 100px; }
         .filter-row button:hover { background: #0056b3; }
         
         .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 20px; }
@@ -234,6 +235,19 @@
                     <option value="">Tất cả</option>
                 </select>
                 
+                <label>Thang điểm:</label>
+                <select id="accuracy-score-filter">
+                    <option value="">Tất cả</option>
+                    <option value="1">1 - Chính xác sản phẩm</option>
+                    <option value="2">2 - Cùng sản phẩm nhưng khác chi tiết nhỏ</option>
+                    <option value="3">3 - Gần giống</option>
+                    <option value="4">4 - Cùng loại sản phẩm, nhưng khác màu sắc, chất liệu</option>
+                    <option value="5">5 - Cùng loại sản phẩm, nhưng khác biệt</option>
+                    <option value="6">6 - Không có sản phẩm trùng</option>
+                </select>
+            </div>
+            
+            <div class="filter-row">
                 <label>Từ ngày:</label>
                 <input type="date" id="date-from">
                 
@@ -356,13 +370,15 @@
             let user = document.getElementById('user-filter').value;
             let dateFrom = document.getElementById('date-from').value;
             let dateTo = document.getElementById('date-to').value;
+            let accuracyScore = document.getElementById('accuracy-score-filter').value;
             
             try {
                 let params = new URLSearchParams({
                     status: status,
                     user: user,
                     date_from: dateFrom,
-                    date_to: dateTo
+                    date_to: dateTo,
+                    accuracy_score: accuracyScore
                 });
                 
                 let resp = await fetch(`/api/admin_filtered_products?${params}`);

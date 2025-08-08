@@ -830,7 +830,8 @@ async def api_admin_filtered_products(
     status: str = None,
     user: str = None,
     date_from: str = None,
-    date_to: str = None
+    date_to: str = None,
+    accuracy_score: str = None
 ):
     pool = await get_pool()
     async with pool.acquire() as conn:
@@ -860,6 +861,11 @@ async def api_admin_filtered_products(
             param_count += 1
             where_conditions.append(f"best_match->>'timestamp' <= ${param_count}::text")
             params.append(date_to + "T23:59:59")
+        
+        if accuracy_score:
+            param_count += 1
+            where_conditions.append(f"best_match->>'accuracy_score' = ${param_count}::text")
+            params.append(accuracy_score)
         
         where_clause = " AND ".join(where_conditions)
         
