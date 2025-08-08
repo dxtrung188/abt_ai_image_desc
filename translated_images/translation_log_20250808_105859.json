@@ -1,0 +1,247 @@
+{
+  "timestamp": "20250808_105859",
+  "original_image_url": "https://cbu01.alicdn.com/img/ibank/O1CN014kKJOh1Bs2yLzI1O5_!!0-0-cib.jpg",
+  "original_local_path": "translated_images\\original_20250808_105859.jpg",
+  "original_local_url": "/translated_images/original_20250808_105859.jpg",
+  "translated_image_url": "https://aib-image.oss-ap-southeast-1.aliyuncs.com/tufan%2F05b5b4d2-740c-11f0-b142-00163e15198a.jpg?OSSAccessKeyId=LTAI5tSEGjGp5wixZgHLc3bV&Expires=4971297543&Signature=7XbkxOf%2BsV4MXmml2giyALL4Us4%3D",
+  "translated_local_path": "translated_images\\translated_20250808_105859.jpg",
+  "translated_local_url": "/translated_images/translated_20250808_105859.jpg",
+  "source_language": "auto",
+  "target_language": "en",
+  "api_response": {
+    "data": {
+      "usage": 1,
+      "result": {
+        "data": {
+          "message": [],
+          "usageMap": "{\"usage\":1}",
+          "structData": {
+            "message": [
+              {
+                "edit_info": {
+                  "goodsRects": {
+                    "top": 184,
+                    "left": 5,
+                    "width": 790,
+                    "height": 448
+                  },
+                  "languages": [
+                    "en"
+                  ],
+                  "resultImageIds": [
+                    "05b069aa-740c-11f0-b142-00163e15198a"
+                  ],
+                  "textAreas": [
+                    {
+                      "horizontalLayout": "center",
+                      "verticalLayout": "center",
+                      "color": "#000000",
+                      "texts": [
+                        {
+                          "valid": false,
+                          "horizontalLayout": "center",
+                          "verticalLayout": "center",
+                          "color": "#000000",
+                          "ovis_err_msg": "| ovis time: 1.082",
+                          "imageRect": {
+                            "top": 68,
+                            "left": 181,
+                            "width": 439,
+                            "degree": 0,
+                            "height": 68
+                          },
+                          "fontsize": 39,
+                          "language": "en",
+                          "value": "Real power factory",
+                          "textRect": {
+                            "top": 81,
+                            "left": 190,
+                            "width": 422,
+                            "degree": 0,
+                            "height": 43
+                          },
+                          "trans_model_name": "MarcoVL2-8B-PicTrans",
+                          "lineCount": 1
+                        }
+                      ],
+                      "fontsize": 39,
+                      "content": "Real power factory",
+                      "lineCount": 1
+                    },
+                    {
+                      "horizontalLayout": "left",
+                      "verticalLayout": "center",
+                      "color": "#000000",
+                      "texts": [
+                        {
+                          "valid": true,
+                          "horizontalLayout": "left",
+                          "verticalLayout": "center",
+                          "color": "#f3fbfa",
+                          "ovis_err_msg": "| ovis time: 1.082",
+                          "imageRect": {
+                            "top": 650,
+                            "left": 1,
+                            "width": 787,
+                            "degree": 0,
+                            "height": 74
+                          },
+                          "fontsize": 19,
+                          "language": "en",
+                          "value": "Sufficient raw materials, automatic equipment, complete mold. Only new materials are used. More than 100,000, over 100 styles.",
+                          "textRect": {
+                            "top": 656,
+                            "left": 5,
+                            "width": 790,
+                            "degree": 0,
+                            "height": 62
+                          },
+                          "trans_model_name": "MarcoVL2-8B-PicTrans",
+                          "lineCount": 2
+                        }
+                      ],
+                      "fontsize": 16,
+                      "content": "Sufficientraw matendsautomatic equipment Complete mold Only new materials are usdqssan TOooo0 More than Too stvles",
+                      "lineCount": 2
+                    }
+                  ],
+                  "repairedUrl": "https://aib-image.oss-ap-southeast-1.aliyuncs.com/tufan%2F050f347c-740c-11f0-89b3-00163e15198a.png?OSSAccessKeyId=LTAI5tSEGjGp5wixZgHLc3bV&Expires=4971297542&Signature=1Wmit49r2WDkS8jM8MFMzCIkH6c%3D",
+                  "font": [
+                    "AlibabaSans-Regular"
+                  ]
+                },
+                "src_image": "https://cbu01.alicdn.com/img/ibank/O1CN014kKJOh1Bs2yLzI1O5_!!0-0-cib.jpg",
+                "result_list": [
+                  {
+                    "fileUrl": "https://aib-image.oss-ap-southeast-1.aliyuncs.com/tufan%2F05b5b4d2-740c-11f0-b142-00163e15198a.jpg?OSSAccessKeyId=LTAI5tSEGjGp5wixZgHLc3bV&Expires=4971297543&Signature=7XbkxOf%2BsV4MXmml2giyALL4Us4%3D",
+                    "language": "en"
+                  }
+                ]
+              }
+            ],
+            "usageMap": "{\"usage\": 1}"
+          }
+        },
+        "success": true,
+        "requestId": "2101364017546255408631555ee2de"
+      }
+    },
+    "resCode": 200,
+    "resMessage": "success",
+    "code": "0",
+    "request_id": "2101026117546255408651613",
+    "_trace_id_": "2101364017546255408631555ee2de"
+  },
+  "detailed_info": {
+    "text_areas": [
+      {
+        "content": "Real power factory",
+        "fontsize": 39,
+        "lineCount": 1,
+        "horizontalLayout": "center",
+        "verticalLayout": "center",
+        "color": "#000000",
+        "texts": [
+          {
+            "value": "Real power factory",
+            "language": "en",
+            "fontsize": 39,
+            "color": "#000000",
+            "valid": false,
+            "lineCount": 1,
+            "trans_model_name": "MarcoVL2-8B-PicTrans",
+            "imageRect": {
+              "top": 68,
+              "left": 181,
+              "width": 439,
+              "degree": 0,
+              "height": 68
+            },
+            "textRect": {
+              "top": 81,
+              "left": 190,
+              "width": 422,
+              "degree": 0,
+              "height": 43
+            }
+          }
+        ]
+      },
+      {
+        "content": "Sufficientraw matendsautomatic equipment Complete mold Only new materials are usdqssan TOooo0 More than Too stvles",
+        "fontsize": 16,
+        "lineCount": 2,
+        "horizontalLayout": "left",
+        "verticalLayout": "center",
+        "color": "#000000",
+        "texts": [
+          {
+            "value": "Sufficient raw materials, automatic equipment, complete mold. Only new materials are used. More than 100,000, over 100 styles.",
+            "language": "en",
+            "fontsize": 19,
+            "color": "#f3fbfa",
+            "valid": true,
+            "lineCount": 2,
+            "trans_model_name": "MarcoVL2-8B-PicTrans",
+            "imageRect": {
+              "top": 650,
+              "left": 1,
+              "width": 787,
+              "degree": 0,
+              "height": 74
+            },
+            "textRect": {
+              "top": 656,
+              "left": 5,
+              "width": 790,
+              "degree": 0,
+              "height": 62
+            }
+          }
+        ]
+      }
+    ],
+    "fonts": [
+      "AlibabaSans-Regular"
+    ],
+    "colors": [
+      "#000000",
+      "#f3fbfa"
+    ],
+    "text_positions": [
+      {
+        "text": "Real power factory",
+        "position": {
+          "top": 68,
+          "left": 181,
+          "width": 439,
+          "degree": 0,
+          "height": 68
+        },
+        "language": "en",
+        "fontsize": 39
+      },
+      {
+        "text": "Sufficient raw materials, automatic equipment, complete mold. Only new materials are used. More than 100,000, over 100 styles.",
+        "position": {
+          "top": 650,
+          "left": 1,
+          "width": 787,
+          "degree": 0,
+          "height": 74
+        },
+        "language": "en",
+        "fontsize": 19
+      }
+    ],
+    "translation_summary": {
+      "total_text_areas": 2,
+      "total_texts": 2,
+      "languages_detected": [
+        "en"
+      ],
+      "fonts_used": 1,
+      "colors_used": 2
+    }
+  }
+}

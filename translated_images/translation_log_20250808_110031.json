@@ -1,0 +1,491 @@
+{
+  "timestamp": "20250808_110031",
+  "original_image_url": "https://cbu01.alicdn.com/img/ibank/O1CN01WbT9Du1Bs2yMLQX6E_!!0-0-cib.jpg",
+  "original_local_path": "translated_images\\original_20250808_110031.jpg",
+  "original_local_url": "/translated_images/original_20250808_110031.jpg",
+  "translated_image_url": "https://aib-image.oss-ap-southeast-1.aliyuncs.com/tufan%2F479346a8-740c-11f0-a9d6-00163e0f2f51.jpg?OSSAccessKeyId=LTAI5tSEGjGp5wixZgHLc3bV&Expires=4971297653&Signature=WAujWZ50BUxLhwwFIMoiKMFFcmY%3D",
+  "translated_local_path": "translated_images\\translated_20250808_110031.jpg",
+  "translated_local_url": "/translated_images/translated_20250808_110031.jpg",
+  "source_language": "auto",
+  "target_language": "en",
+  "api_response": {
+    "data": {
+      "usage": 1,
+      "result": {
+        "data": {
+          "message": [],
+          "usageMap": "{\"usage\":1}",
+          "structData": {
+            "message": [
+              {
+                "edit_info": {
+                  "goodsRects": {
+                    "top": 70,
+                    "left": 45,
+                    "width": 278,
+                    "height": 558
+                  },
+                  "languages": [
+                    "en"
+                  ],
+                  "resultImageIds": [
+                    "478dea6e-740c-11f0-a9d6-00163e0f2f51"
+                  ],
+                  "textAreas": [
+                    {
+                      "horizontalLayout": "center",
+                      "verticalLayout": "center",
+                      "color": "#000000",
+                      "texts": [
+                        {
+                          "valid": false,
+                          "horizontalLayout": "center",
+                          "verticalLayout": "center",
+                          "color": "#000000",
+                          "ovis_err_msg": "| ovis time: 1.207",
+                          "imageRect": {
+                            "top": 116,
+                            "left": 417,
+                            "width": 252,
+                            "degree": 0,
+                            "height": 102
+                          },
+                          "fontsize": 62,
+                          "language": "en",
+                          "value": "Buckle",
+                          "textRect": {
+                            "top": 136,
+                            "left": 431,
+                            "width": 225,
+                            "degree": 0,
+                            "height": 63
+                          },
+                          "trans_model_name": "MarcoVL2-8B-PicTrans",
+                          "lineCount": 1
+                        }
+                      ],
+                      "fontsize": 62,
+                      "content": "Buckle",
+                      "lineCount": 1
+                    },
+                    {
+                      "horizontalLayout": "left",
+                      "verticalLayout": "center",
+                      "color": "#000000",
+                      "texts": [
+                        {
+                          "valid": true,
+                          "horizontalLayout": "left",
+                          "verticalLayout": "center",
+                          "color": "#dbdbdb",
+                          "ovis_err_msg": "| ovis time: 1.207",
+                          "imageRect": {
+                            "top": 224,
+                            "left": 380,
+                            "width": 313,
+                            "degree": 0,
+                            "height": 51
+                          },
+                          "fontsize": 19,
+                          "language": "en",
+                          "value": "Waterproof, Moisture-proof, Durable, Load-bearing",
+                          "textRect": {
+                            "top": 230,
+                            "left": 384,
+                            "width": 350,
+                            "degree": 0,
+                            "height": 40
+                          },
+                          "trans_model_name": "MarcoVL2-8B-PicTrans",
+                          "lineCount": 2
+                        }
+                      ],
+                      "fontsize": 18,
+                      "content": "Waterproof Moisture-proof Monthly Durable Load-bearing",
+                      "lineCount": 2
+                    },
+                    {
+                      "horizontalLayout": "left",
+                      "verticalLayout": "center",
+                      "color": "#000000",
+                      "texts": [
+                        {
+                          "valid": false,
+                          "horizontalLayout": "left",
+                          "verticalLayout": "center",
+                          "color": "#000000",
+                          "ovis_err_msg": "| ovis time: 1.207",
+                          "imageRect": {
+                            "top": 311,
+                            "left": 447,
+                            "width": 142,
+                            "degree": 0,
+                            "height": 64
+                          },
+                          "fontsize": 23,
+                          "language": "en",
+                          "value": "Scope of application",
+                          "textRect": {
+                            "top": 319,
+                            "left": 453,
+                            "width": 131,
+                            "degree": 0,
+                            "height": 49
+                          },
+                          "trans_model_name": "MarcoVL2-8B-PicTrans",
+                          "lineCount": 1
+                        }
+                      ],
+                      "fontsize": 23,
+                      "content": "Scope of application",
+                      "lineCount": 2
+                    },
+                    {
+                      "horizontalLayout": "center",
+                      "verticalLayout": "center",
+                      "color": "#000000",
+                      "texts": [
+                        {
+                          "valid": false,
+                          "horizontalLayout": "center",
+                          "verticalLayout": "center",
+                          "color": "#000000",
+                          "ovis_err_msg": "| ovis time: 1.207",
+                          "imageRect": {
+                            "top": 396,
+                            "left": 420,
+                            "width": 244,
+                            "degree": 0,
+                            "height": 35
+                          },
+                          "fontsize": 20,
+                          "language": "en",
+                          "value": "Socket row photo frame",
+                          "textRect": {
+                            "top": 403,
+                            "left": 425,
+                            "width": 235,
+                            "degree": 0,
+                            "height": 22
+                          },
+                          "trans_model_name": "MarcoVL2-8B-PicTrans",
+                          "lineCount": 1
+                        }
+                      ],
+                      "fontsize": 20,
+                      "content": "Socket row photo frame",
+                      "lineCount": 1
+                    },
+                    {
+                      "horizontalLayout": "left",
+                      "verticalLayout": "center",
+                      "color": "#000000",
+                      "texts": [
+                        {
+                          "valid": true,
+                          "horizontalLayout": "left",
+                          "verticalLayout": "center",
+                          "color": "#fdfdfd",
+                          "ovis_err_msg": "| ovis time: 1.207",
+                          "imageRect": {
+                            "top": 459,
+                            "left": 411,
+                            "width": 287,
+                            "degree": 0,
+                            "height": 37
+                          },
+                          "fontsize": 22,
+                          "language": "en",
+                          "value": "Router, tissue box, etc.",
+                          "textRect": {
+                            "top": 467,
+                            "left": 416,
+                            "width": 290,
+                            "degree": 0,
+                            "height": 22
+                          },
+                          "trans_model_name": "MarcoVL2-8B-PicTrans",
+                          "lineCount": 1
+                        }
+                      ],
+                      "fontsize": 22,
+                      "content": "Routerlissue box,etc",
+                      "lineCount": 1
+                    }
+                  ],
+                  "repairedUrl": "https://aib-image.oss-ap-southeast-1.aliyuncs.com/tufan%2F46d7ba0a-740c-11f0-871b-00163e0f2f51.png?OSSAccessKeyId=LTAI5tSEGjGp5wixZgHLc3bV&Expires=4971297652&Signature=YnOVLXyS15vAlpYRBVAeeH4LoWU%3D",
+                  "font": [
+                    "AlibabaSans-Regular"
+                  ]
+                },
+                "src_image": "https://cbu01.alicdn.com/img/ibank/O1CN01WbT9Du1Bs2yMLQX6E_!!0-0-cib.jpg",
+                "result_list": [
+                  {
+                    "fileUrl": "https://aib-image.oss-ap-southeast-1.aliyuncs.com/tufan%2F479346a8-740c-11f0-a9d6-00163e0f2f51.jpg?OSSAccessKeyId=LTAI5tSEGjGp5wixZgHLc3bV&Expires=4971297653&Signature=WAujWZ50BUxLhwwFIMoiKMFFcmY%3D",
+                    "language": "en"
+                  }
+                ]
+              }
+            ],
+            "usageMap": "{\"usage\": 1}"
+          }
+        },
+        "success": true,
+        "requestId": "2140e7df17546256317883004eca60"
+      }
+    },
+    "resCode": 200,
+    "resMessage": "success",
+    "code": "0",
+    "request_id": "2101026117546256317901614",
+    "_trace_id_": "2140e7df17546256317883004eca60"
+  },
+  "detailed_info": {
+    "text_areas": [
+      {
+        "content": "Buckle",
+        "fontsize": 62,
+        "lineCount": 1,
+        "horizontalLayout": "center",
+        "verticalLayout": "center",
+        "color": "#000000",
+        "texts": [
+          {
+            "value": "Buckle",
+            "language": "en",
+            "fontsize": 62,
+            "color": "#000000",
+            "valid": false,
+            "lineCount": 1,
+            "trans_model_name": "MarcoVL2-8B-PicTrans",
+            "imageRect": {
+              "top": 116,
+              "left": 417,
+              "width": 252,
+              "degree": 0,
+              "height": 102
+            },
+            "textRect": {
+              "top": 136,
+              "left": 431,
+              "width": 225,
+              "degree": 0,
+              "height": 63
+            }
+          }
+        ]
+      },
+      {
+        "content": "Waterproof Moisture-proof Monthly Durable Load-bearing",
+        "fontsize": 18,
+        "lineCount": 2,
+        "horizontalLayout": "left",
+        "verticalLayout": "center",
+        "color": "#000000",
+        "texts": [
+          {
+            "value": "Waterproof, Moisture-proof, Durable, Load-bearing",
+            "language": "en",
+            "fontsize": 19,
+            "color": "#dbdbdb",
+            "valid": true,
+            "lineCount": 2,
+            "trans_model_name": "MarcoVL2-8B-PicTrans",
+            "imageRect": {
+              "top": 224,
+              "left": 380,
+              "width": 313,
+              "degree": 0,
+              "height": 51
+            },
+            "textRect": {
+              "top": 230,
+              "left": 384,
+              "width": 350,
+              "degree": 0,
+              "height": 40
+            }
+          }
+        ]
+      },
+      {
+        "content": "Scope of application",
+        "fontsize": 23,
+        "lineCount": 2,
+        "horizontalLayout": "left",
+        "verticalLayout": "center",
+        "color": "#000000",
+        "texts": [
+          {
+            "value": "Scope of application",
+            "language": "en",
+            "fontsize": 23,
+            "color": "#000000",
+            "valid": false,
+            "lineCount": 1,
+            "trans_model_name": "MarcoVL2-8B-PicTrans",
+            "imageRect": {
+              "top": 311,
+              "left": 447,
+              "width": 142,
+              "degree": 0,
+              "height": 64
+            },
+            "textRect": {
+              "top": 319,
+              "left": 453,
+              "width": 131,
+              "degree": 0,
+              "height": 49
+            }
+          }
+        ]
+      },
+      {
+        "content": "Socket row photo frame",
+        "fontsize": 20,
+        "lineCount": 1,
+        "horizontalLayout": "center",
+        "verticalLayout": "center",
+        "color": "#000000",
+        "texts": [
+          {
+            "value": "Socket row photo frame",
+            "language": "en",
+            "fontsize": 20,
+            "color": "#000000",
+            "valid": false,
+            "lineCount": 1,
+            "trans_model_name": "MarcoVL2-8B-PicTrans",
+            "imageRect": {
+              "top": 396,
+              "left": 420,
+              "width": 244,
+              "degree": 0,
+              "height": 35
+            },
+            "textRect": {
+              "top": 403,
+              "left": 425,
+              "width": 235,
+              "degree": 0,
+              "height": 22
+            }
+          }
+        ]
+      },
+      {
+        "content": "Routerlissue box,etc",
+        "fontsize": 22,
+        "lineCount": 1,
+        "horizontalLayout": "left",
+        "verticalLayout": "center",
+        "color": "#000000",
+        "texts": [
+          {
+            "value": "Router, tissue box, etc.",
+            "language": "en",
+            "fontsize": 22,
+            "color": "#fdfdfd",
+            "valid": true,
+            "lineCount": 1,
+            "trans_model_name": "MarcoVL2-8B-PicTrans",
+            "imageRect": {
+              "top": 459,
+              "left": 411,
+              "width": 287,
+              "degree": 0,
+              "height": 37
+            },
+            "textRect": {
+              "top": 467,
+              "left": 416,
+              "width": 290,
+              "degree": 0,
+              "height": 22
+            }
+          }
+        ]
+      }
+    ],
+    "fonts": [
+      "AlibabaSans-Regular"
+    ],
+    "colors": [
+      "#dbdbdb",
+      "#000000",
+      "#fdfdfd"
+    ],
+    "text_positions": [
+      {
+        "text": "Buckle",
+        "position": {
+          "top": 116,
+          "left": 417,
+          "width": 252,
+          "degree": 0,
+          "height": 102
+        },
+        "language": "en",
+        "fontsize": 62
+      },
+      {
+        "text": "Waterproof, Moisture-proof, Durable, Load-bearing",
+        "position": {
+          "top": 224,
+          "left": 380,
+          "width": 313,
+          "degree": 0,
+          "height": 51
+        },
+        "language": "en",
+        "fontsize": 19
+      },
+      {
+        "text": "Scope of application",
+        "position": {
+          "top": 311,
+          "left": 447,
+          "width": 142,
+          "degree": 0,
+          "height": 64
+        },
+        "language": "en",
+        "fontsize": 23
+      },
+      {
+        "text": "Socket row photo frame",
+        "position": {
+          "top": 396,
+          "left": 420,
+          "width": 244,
+          "degree": 0,
+          "height": 35
+        },
+        "language": "en",
+        "fontsize": 20
+      },
+      {
+        "text": "Router, tissue box, etc.",
+        "position": {
+          "top": 459,
+          "left": 411,
+          "width": 287,
+          "degree": 0,
+          "height": 37
+        },
+        "language": "en",
+        "fontsize": 22
+      }
+    ],
+    "translation_summary": {
+      "total_text_areas": 5,
+      "total_texts": 5,
+      "languages_detected": [
+        "en"
+      ],
+      "fonts_used": 1,
+      "colors_used": 3
+    }
+  }
+}

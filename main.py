@@ -15,6 +15,8 @@ import hmac
 import hashlib
 import time
 import asyncio
+from urllib.parse import urlparse
+import random
 from utils import (
     log_message, download_image_from_url, encode_image_base64, clean_json_response, extract_estimate_from_response, analyze_image_openai_json,
     get_candidates_info, get_next_image_to_label, get_batch_images_for_label
@@ -136,6 +138,82 @@ def generate_aidge_signature(access_key_secret: str, timestamp: str) -> str:
                  (access_key_secret + timestamp).encode('utf-8'), 
                  hashlib.sha256)
     return h.hexdigest().upper()
+
+async def fetch_and_save_image(image_url: str, dest_path: str, max_retries: int = 3, referer_override: str | None = None):
+    """Download an image with realistic headers, referer, and retry/backoff.
+
+    Returns (ok: bool, message: str)
+    """
+    parsed = urlparse(image_url)
+    # Determine referer
+    if referer_override:
+        referer = referer_override
+    else:
+        # Special-case Alibaba CDN anti-hotlink: require 1688 referer
+        if parsed.netloc.endswith("alicdn.com"):
+            referer = "https://www.1688.com/"
+        else:
+            referer = f"{parsed.scheme}://{parsed.netloc}/" if parsed.scheme and parsed.netloc else None
+
+    headers = {
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+            "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+        ),
+        "Accept": "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
+        "Accept-Language": "vi,en-US;q=0.9,en;q=0.8",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Connection": "keep-alive",
+        "Cache-Control": "no-cache",
+        "Pragma": "no-cache",
+    }
+    if referer:
+        headers["Referer"] = referer
+
+    timeout = aiohttp.ClientTimeout(total=30)
+    retry_statuses = {420, 429, 403, 408, 500, 502, 503, 504}
+
+    try:
+        async with aiohttp.ClientSession(timeout=timeout) as session:
+            last_status = None
+            last_error = None
+            for attempt in range(1, max_retries + 1):
+                try:
+                    async with session.get(image_url, headers=headers, allow_redirects=True) as response:
+                        if response.status == 200:
+                            content = await response.read()
+                            with open(dest_path, "wb") as f:
+                                f.write(content)
+                            return True, ""
+                        last_status = response.status
+                        # Respect Retry-After if present
+                        if response.status in retry_statuses:
+                            retry_after = response.headers.get("Retry-After")
+                            if retry_after:
+                                try:
+                                    sleep_s = float(retry_after)
+                                except ValueError:
+                                    sleep_s = min(2 ** attempt + random.uniform(0, 0.5), 10)
+                            else:
+                                sleep_s = min(2 ** attempt + random.uniform(0, 0.5), 10)
+                            await asyncio.sleep(sleep_s)
+                            continue
+                        else:
+                            # Non-retryable status
+                            return False, f"Không thể download ảnh từ URL: {response.status}"
+                except Exception as e:
+                    last_error = str(e)
+                    # Backoff and retry on network errors
+                    if attempt < max_retries:
+                        sleep_s = min(2 ** attempt + random.uniform(0, 0.5), 10)
+                        await asyncio.sleep(sleep_s)
+                        continue
+            # Exhausted retries
+            if last_status is not None:
+                return False, f"Không thể download ảnh từ URL: {last_status}"
+            return False, f"Lỗi khi download ảnh: {last_error or 'không xác định'}"
+    except Exception as e:
+        return False, f"Lỗi khi download ảnh: {str(e)}"
 
 async def call_aidge_image_translation(image_url: str, source_language: str, target_language: str) -> dict:
     """Gọi Aidge Image Translation API - sử dụng translation_mllm API"""
@@ -493,19 +571,11 @@ async def translate_image(
         # Tạo thư mục nếu chưa có
         os.makedirs(TRANSLATED_IMAGES_DIR, exist_ok=True)
         
-        # Download và lưu ảnh gốc từ URL
+        # Download và lưu ảnh gốc từ URL (có retry + headers)
         original_path = os.path.join(TRANSLATED_IMAGES_DIR, unique_filename)
-        try:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(image_url) as response:
-                    if response.status == 200:
-                        content = await response.read()
-                        with open(original_path, "wb") as f:
-                            f.write(content)
-                    else:
-                        return JSONResponse({"success": False, "message": f"Không thể download ảnh từ URL: {response.status}"})
-        except Exception as e:
-            return JSONResponse({"success": False, "message": f"Lỗi khi download ảnh: {str(e)}"})
+        ok, err = await fetch_and_save_image(image_url, original_path)
+        if not ok:
+            return JSONResponse({"success": False, "message": err})
         
         # Tạo URL local cho ảnh gốc
         original_url = f"/translated_images/{unique_filename}"
@@ -562,50 +632,45 @@ async def translate_image(
         translated_filename = f"translated_{timestamp}{file_extension}"
         translated_path = os.path.join(TRANSLATED_IMAGES_DIR, translated_filename)
         
-        # Download ảnh từ URL
-        async with aiohttp.ClientSession() as session:
-            async with session.get(translated_image_url) as response:
-                if response.status == 200:
-                    translated_content = await response.read()
-                    with open(translated_path, "wb") as f:
-                        f.write(translated_content)
-                    
-                    translated_url = f"/translated_images/{translated_filename}"
-                    
-                    # Trích xuất thông tin chi tiết từ response
-                    detailed_info = extract_detailed_translation_info(data)
-                    
-                    # Lưu log kết quả translate
-                    log_data = {
-                        "timestamp": timestamp,
-                        "original_image_url": image_url,
-                        "original_local_path": original_path,
-                        "original_local_url": original_url,
-                        "translated_image_url": translated_image_url,
-                        "translated_local_path": translated_path,
-                        "translated_local_url": translated_url,
-                        "source_language": source_language,
-                        "target_language": target_language,
-                        "api_response": result,
-                        "detailed_info": detailed_info
-                    }
-                    
-                    # Lưu log vào file JSON
-                    log_filename = f"translation_log_{timestamp}.json"
-                    log_path = os.path.join(TRANSLATED_IMAGES_DIR, log_filename)
-                    with open(log_path, "w", encoding="utf-8") as f:
-                        json.dump(log_data, f, ensure_ascii=False, indent=2)
-                    
-                    return JSONResponse({
-                        "success": True,
-                        "original_image_url": original_url,
-                        "translated_image_url": translated_url,
-                        "message": "Dịch ảnh thành công",
-                        "detailed_info": detailed_info,
-                        "log_file": log_filename
-                    })
-                else:
-                    return JSONResponse({"success": False, "message": "Không thể download ảnh đã dịch"})
+        # Download ảnh từ URL (có retry + headers)
+        ok, err = await fetch_and_save_image(translated_image_url, translated_path)
+        if not ok:
+            return JSONResponse({"success": False, "message": err or "Không thể download ảnh đã dịch"})
+
+        translated_url = f"/translated_images/{translated_filename}"
+
+        # Trích xuất thông tin chi tiết từ response
+        detailed_info = extract_detailed_translation_info(data)
+
+        # Lưu log kết quả translate
+        log_data = {
+            "timestamp": timestamp,
+            "original_image_url": image_url,
+            "original_local_path": original_path,
+            "original_local_url": original_url,
+            "translated_image_url": translated_image_url,
+            "translated_local_path": translated_path,
+            "translated_local_url": translated_url,
+            "source_language": source_language,
+            "target_language": target_language,
+            "api_response": result,
+            "detailed_info": detailed_info
+        }
+
+        # Lưu log vào file JSON
+        log_filename = f"translation_log_{timestamp}.json"
+        log_path = os.path.join(TRANSLATED_IMAGES_DIR, log_filename)
+        with open(log_path, "w", encoding="utf-8") as f:
+            json.dump(log_data, f, ensure_ascii=False, indent=2)
+
+        return JSONResponse({
+            "success": True,
+            "original_image_url": original_url,
+            "translated_image_url": translated_url,
+            "message": "Dịch ảnh thành công",
+            "detailed_info": detailed_info,
+            "log_file": log_filename
+        })
         
     except Exception as e:
         return JSONResponse({"success": False, "message": f"Lỗi xử lý: {str(e)}"})

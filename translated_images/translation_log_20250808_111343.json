@@ -1,0 +1,248 @@
+{
+  "timestamp": "20250808_111343",
+  "original_image_url": "https://cbu01.alicdn.com/img/ibank/O1CN017hi1ks1kwAxFQO1uu_!!971624747-0-cib.jpg",
+  "original_local_path": "translated_images\\original_20250808_111343.jpg",
+  "original_local_url": "/translated_images/original_20250808_111343.jpg",
+  "translated_image_url": "https://aib-image.oss-ap-southeast-1.aliyuncs.com/tufan%2F15b1ac18-740e-11f0-a590-00163e15198a.jpg?OSSAccessKeyId=LTAI5tSEGjGp5wixZgHLc3bV&Expires=4971298429&Signature=DxzKkKh1Z7JXzMtYuIp%2FDdKRCGA%3D",
+  "translated_local_path": "translated_images\\translated_20250808_111343.jpg",
+  "translated_local_url": "/translated_images/translated_20250808_111343.jpg",
+  "source_language": "auto",
+  "target_language": "en",
+  "api_response": {
+    "data": {
+      "usage": 1,
+      "result": {
+        "data": {
+          "message": [],
+          "usageMap": "{\"usage\":1}",
+          "structData": {
+            "message": [
+              {
+                "edit_info": {
+                  "goodsRects": {
+                    "top": 0,
+                    "left": 0,
+                    "width": 799,
+                    "height": 799
+                  },
+                  "languages": [
+                    "en"
+                  ],
+                  "resultImageIds": [
+                    "15a51688-740e-11f0-a590-00163e15198a"
+                  ],
+                  "textAreas": [
+                    {
+                      "horizontalLayout": "left",
+                      "verticalLayout": "center",
+                      "color": "#000000",
+                      "texts": [
+                        {
+                          "valid": true,
+                          "horizontalLayout": "left",
+                          "verticalLayout": "center",
+                          "color": "#fdfefd",
+                          "ovis_err_msg": "| ovis time: 0.682",
+                          "imageRect": {
+                            "top": 107,
+                            "left": 33,
+                            "width": 457,
+                            "degree": 0,
+                            "height": 92
+                          },
+                          "fontsize": 46,
+                          "language": "en",
+                          "value": "Soft seal, odor-free",
+                          "textRect": {
+                            "top": 125,
+                            "left": 45,
+                            "width": 434,
+                            "degree": 0,
+                            "height": 56
+                          },
+                          "trans_model_name": "MarcoVL2-8B-PicTrans",
+                          "lineCount": 1
+                        }
+                      ],
+                      "fontsize": 54,
+                      "content": "柔软密封无异味",
+                      "lineCount": 1
+                    },
+                    {
+                      "horizontalLayout": "left",
+                      "verticalLayout": "center",
+                      "color": "#000000",
+                      "texts": [
+                        {
+                          "valid": true,
+                          "horizontalLayout": "left",
+                          "verticalLayout": "center",
+                          "color": "#fffeff",
+                          "ovis_err_msg": "| ovis time: 0.682",
+                          "imageRect": {
+                            "top": 216,
+                            "left": 38,
+                            "width": 178,
+                            "degree": 0,
+                            "height": 32
+                          },
+                          "fontsize": 11,
+                          "language": "en",
+                          "value": "Various sizes / Secure storage",
+                          "textRect": {
+                            "top": 222,
+                            "left": 42,
+                            "width": 170,
+                            "degree": 0,
+                            "height": 20
+                          },
+                          "trans_model_name": "MarcoVL2-8B-PicTrans",
+                          "lineCount": 1
+                        }
+                      ],
+                      "fontsize": 18,
+                      "content": "多种规格/安心收纳",
+                      "lineCount": 1
+                    }
+                  ],
+                  "repairedUrl": "https://aib-image.oss-ap-southeast-1.aliyuncs.com/tufan%2F15407c6e-740e-11f0-89b3-00163e15198a.png?OSSAccessKeyId=LTAI5tSEGjGp5wixZgHLc3bV&Expires=4971298428&Signature=OV6leX4MCpZNNG2RB%2FMlr6oc%2BNs%3D",
+                  "font": [
+                    "AlibabaSans-Regular"
+                  ]
+                },
+                "src_image": "https://cbu01.alicdn.com/img/ibank/O1CN017hi1ks1kwAxFQO1uu_!!971624747-0-cib.jpg",
+                "result_list": [
+                  {
+                    "fileUrl": "https://aib-image.oss-ap-southeast-1.aliyuncs.com/tufan%2F15b1ac18-740e-11f0-a590-00163e15198a.jpg?OSSAccessKeyId=LTAI5tSEGjGp5wixZgHLc3bV&Expires=4971298429&Signature=DxzKkKh1Z7JXzMtYuIp%2FDdKRCGA%3D",
+                    "language": "en"
+                  }
+                ]
+              }
+            ],
+            "usageMap": "{\"usage\": 1}"
+          }
+        },
+        "success": true,
+        "requestId": "2102f32217546264242394642ee91c"
+      }
+    },
+    "resCode": 200,
+    "resMessage": "success",
+    "code": "0",
+    "request_id": "2102ffe817546264242472894",
+    "_trace_id_": "2102f32217546264242394642ee91c"
+  },
+  "detailed_info": {
+    "text_areas": [
+      {
+        "content": "柔软密封无异味",
+        "fontsize": 54,
+        "lineCount": 1,
+        "horizontalLayout": "left",
+        "verticalLayout": "center",
+        "color": "#000000",
+        "texts": [
+          {
+            "value": "Soft seal, odor-free",
+            "language": "en",
+            "fontsize": 46,
+            "color": "#fdfefd",
+            "valid": true,
+            "lineCount": 1,
+            "trans_model_name": "MarcoVL2-8B-PicTrans",
+            "imageRect": {
+              "top": 107,
+              "left": 33,
+              "width": 457,
+              "degree": 0,
+              "height": 92
+            },
+            "textRect": {
+              "top": 125,
+              "left": 45,
+              "width": 434,
+              "degree": 0,
+              "height": 56
+            }
+          }
+        ]
+      },
+      {
+        "content": "多种规格/安心收纳",
+        "fontsize": 18,
+        "lineCount": 1,
+        "horizontalLayout": "left",
+        "verticalLayout": "center",
+        "color": "#000000",
+        "texts": [
+          {
+            "value": "Various sizes / Secure storage",
+            "language": "en",
+            "fontsize": 11,
+            "color": "#fffeff",
+            "valid": true,
+            "lineCount": 1,
+            "trans_model_name": "MarcoVL2-8B-PicTrans",
+            "imageRect": {
+              "top": 216,
+              "left": 38,
+              "width": 178,
+              "degree": 0,
+              "height": 32
+            },
+            "textRect": {
+              "top": 222,
+              "left": 42,
+              "width": 170,
+              "degree": 0,
+              "height": 20
+            }
+          }
+        ]
+      }
+    ],
+    "fonts": [
+      "AlibabaSans-Regular"
+    ],
+    "colors": [
+      "#000000",
+      "#fdfefd",
+      "#fffeff"
+    ],
+    "text_positions": [
+      {
+        "text": "Soft seal, odor-free",
+        "position": {
+          "top": 107,
+          "left": 33,
+          "width": 457,
+          "degree": 0,
+          "height": 92
+        },
+        "language": "en",
+        "fontsize": 46
+      },
+      {
+        "text": "Various sizes / Secure storage",
+        "position": {
+          "top": 216,
+          "left": 38,
+          "width": 178,
+          "degree": 0,
+          "height": 32
+        },
+        "language": "en",
+        "fontsize": 11
+      }
+    ],
+    "translation_summary": {
+      "total_text_areas": 2,
+      "total_texts": 2,
+      "languages_detected": [
+        "en"
+      ],
+      "fonts_used": 1,
+      "colors_used": 3
+    }
+  }
+}
